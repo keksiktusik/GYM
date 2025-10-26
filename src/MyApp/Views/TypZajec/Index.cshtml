@@ -1,0 +1,33 @@
+﻿@model IEnumerable<MyApp.Models.TypZajec>
+@{
+    ViewData["Title"] = "Typy zajęć";
+}
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <a asp-action="Create" class="btn btn-success mb-3">➕ Dodaj nowy typ</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Poziom trudności</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nazwa</td>
+                    <td>@item.Opis</td>
+                    <td>@item.PoziomTrudnosci</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">✏️ Edytuj</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">🗑 Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

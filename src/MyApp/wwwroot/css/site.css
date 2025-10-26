@@ -16,16 +16,53 @@ html {
   position: relative;
   min-height: 100%;
 }
+/* === Styl nowoczesny dla aplikacji fitness === */
 
 body {
-  margin-bottom: 60px;
+    background: linear-gradient(135deg, #e0f7fa, #e8eaf6);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    min-height: 100vh;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.container {
+    max-width: 1000px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+h1, h2, h3 {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #007bff, #00bcd4);
+    border: none;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #00bcd4, #007bff);
+    }
+
+header {
+    background: linear-gradient(90deg, #007bff, #00bcd4);
+    color: white;
+    padding: 20px 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+    header h1 {
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 10px;
+    color: #607d8b;
 }

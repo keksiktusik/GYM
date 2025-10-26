@@ -1,0 +1,22 @@
+﻿@model MyApp.Models.TypZajec
+@{
+    ViewData["Title"] = "Usuń typ zajęć";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <h5>Czy na pewno chcesz usunąć poniższy typ zajęć?</h5>
+    <div class="card p-3 mb-3">
+        <p><strong>Nazwa:</strong> @Model.Nazwa</p>
+        <p><strong>Opis:</strong> @Model.Opis</p>
+        <p><strong>Poziom trudności:</strong> @Model.PoziomTrudnosci</p>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">🗑 Usuń</button>
+        <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+    </form>
+</div>
