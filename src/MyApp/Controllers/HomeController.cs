@@ -1,31 +1,30 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using MyApp.Models;
 
-namespace MyApp.Controllers;
-
-public class HomeController : Controller
+namespace MyApp.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View(new Person());
+        }
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Index(Person model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+            model.Compute();
+            return View("Result", model); // <- to musi być View("Result", model)
+        }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public IActionResult Result(Person model)
+        {
+            return View(model);
+        }
     }
 }

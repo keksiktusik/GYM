@@ -1,0 +1,14 @@
+@model MyApp.Models.Person
+@{
+    ViewData["Title"] = "Wynik BMI";
+}
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <div class="card shadow-sm p-3">
+        <p><strong>Wzrost:</strong> @Model.HeightCm cm</p>
+        <p><strong>Waga:</strong> @Model.WeightKg kg</p>
+        <p><strong>BMI:</strong> @Model.Bmi</p>
+        <p><strong>Kategoria:</strong> @Model.Category</p>
+    </div>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Wróć</a>
+</div>
