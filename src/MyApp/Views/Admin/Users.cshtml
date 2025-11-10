@@ -1,0 +1,112 @@
+@model IEnumerable<MyApp.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Panel administratora – użytkownicy";
+    var roles = ViewBag.Roles as List<string>;
+    string selectedRole = ViewBag.SelectedRole;
+    string search = ViewBag.Search;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">🧑‍💼 Panel administratora</h2>
+
+    @if (TempData["msg"] != null)
+    {
+        <div class="alert alert-info text-center">@TempData["msg"]</div>
+    }
+
+    <!-- 🔍 Wyszukiwanie i filtrowanie -->
+    <form method="get" asp-action="Users" class="row mb-4 g-2 align-items-center">
+        <div class="col-md-5">
+            <input type="text" name="searchString" value="@search" class="form-control"
+                   placeholder="Wyszukaj po adresie e-mail..." />
+        </div>
+        <div class="col-md-3">
+            <select name="roleFilter" class="form-select">
+                <option value="">Wszystkie role</option>
+                @foreach (var role in roles)
+                {
+                    <option value="@role" selected="@(selectedRole == role)">
+                        @role
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100" type="submit">Filtruj</button>
+        </div>
+        <div class="col-md-2 text-end">
+            <a class="btn btn-success w-100" asp-action="Stats">📊 Statystyki</a>
+        </div>
+    </form>
+
+    <!-- 📋 Lista użytkowników -->
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Email</th>
+                <th>Data utworzenia</th>
+                <th>Potwierdzony e-mail</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@user.CreatedAt.ToShortDateString()</td>
+                    <td>@(user.EmailConfirmed ? "✅ Tak" : "❌ Nie")</td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <!-- Szczegóły -->
+                            <a asp-action="Details" asp-route-id="@user.Id" class="btn btn-outline-primary">Szczegóły</a>
+
+                            <!-- Zmień rolę -->
+                            <form asp-action="ChangeRole" method="post" class="d-inline">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <select name="roleName" class="form-select form-select-sm d-inline-block" style="width:auto;display:inline;">
+                                    @foreach (var role in roles)
+                                    {
+                                        <option>@role</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-outline-warning">Zmień</button>
+                            </form>
+
+                            <!-- Blokuj / Odblokuj -->
+                            <form asp-action="ToggleLock" method="post" class="d-inline">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-outline-danger">
+                                    @(user.LockoutEnd != null && user.LockoutEnd > DateTime.UtcNow ? "Odblokuj" : "Zablokuj")
+                                </button>
+                            </form>
+
+                            <!-- Reset hasła -->
+                            <form asp-action="ResetPassword" method="post" class="d-inline">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-outline-secondary">Resetuj hasło</button>
+                            </form>
+
+                            <!-- Usuń -->
+                            <form asp-action="DeleteUser" method="post" class="d-inline">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <button type="submit" class="btn btn-outline-danger"
+                                        onclick="return confirm('Na pewno chcesz usunąć tego użytkownika?');">
+                                    Usuń
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Wiadomość do użytkownika -->
+                        <form asp-action="SendMessage" method="post" class="mt-2">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <input type="text" name="message" class="form-control form-control-sm"
+                                   placeholder="Wpisz wiadomość do użytkownika..." />
+                            <button type="submit" class="btn btn-sm btn-success mt-1">Wyślij wiadomość</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

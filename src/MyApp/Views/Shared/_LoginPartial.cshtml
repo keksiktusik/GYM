@@ -1,40 +1,61 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<MyApp.Models.ApplicationUser> SignInManager
-@inject UserManager<MyApp.Models.ApplicationUser> UserManager
+@using MyApp.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 <ul class="navbar-nav ms-auto">
     @if (SignInManager.IsSignedIn(User))
     {
+        <!-- Powitanie -->
         <li class="nav-item">
-            <span class="nav-link">Witaj, @User.Identity?.Name</span>
+            <span class="nav-link text-dark">Witaj, @User.Identity?.Name</span>
         </li>
 
+        @* Panel dla Administratora *@
         @if (User.IsInRole("Administrator"))
         {
             <li class="nav-item">
-                <a class="nav-link" asp-controller="Admin" asp-action="Index">Panel admina</a>
+                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Users">
+                    Panel admina
+                </a>
             </li>
         }
-        else if (User.IsInRole("Klient"))
+        else
         {
-            <li class="nav-item">
-                <a class="nav-link" asp-controller="Client" asp-action="Index">Panel klienta</a>
-            </li>
+            @* Panel dla Klienta (jeśli ma taką rolę) *@
+            @if (User.IsInRole("Klient"))
+            {
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-controller="Client" asp-action="Index">
+                        Panel klienta
+                    </a>
+                </li>
+            }
         }
 
+        <!-- Przycisk Wyloguj -->
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="~/" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Wyloguj</button>
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                  method="post">
+                <button type="submit" class="nav-link btn btn-link text-dark">
+                    Wyloguj
+                </button>
             </form>
         </li>
     }
     else
     {
+        <!-- Linki dla niezalogowanego użytkownika -->
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Zaloguj</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">
+                Zaloguj
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">
+                Rejestracja
+            </a>
         </li>
     }
 </ul>

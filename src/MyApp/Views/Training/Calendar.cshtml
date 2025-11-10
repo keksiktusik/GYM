@@ -1,0 +1,89 @@
+@{
+    ViewData["Title"] = "Kalendarz treningów";
+}
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.js'></script>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📅 Twój kalendarz treningów</h2>
+    <div id="calendar"></div>
+</div>
+
+<!-- Modal: dodawanie treningu -->
+<div class="modal fade" id="addEventModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="addEventForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Dodaj trening</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <label class="form-label">Data i godzina rozpoczęcia</label>
+            <input type="datetime-local" name="Start" class="form-control" required />
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Data i godzina zakończenia</label>
+            <input type="datetime-local" name="End" class="form-control" required />
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Typ treningu</label>
+            <select name="Title" class="form-select">
+              <option>Cardio</option>
+              <option>Trening siłowy</option>
+              <option>Stretching</option>
+              <option>Zajęcia grupowe</option>
+              <option>Inne</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="form-label">Opis</label>
+            <textarea name="Description" class="form-control" rows="2"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Zapisz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        events: '/Training/GetEvents',
+
+        dateClick: function(info) {
+            // otwórz formularz modalu
+            const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
+            document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
+            document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
+            modal.show();
+        }
+    });
+    calendar.render();
+
+    // obsługa formularza
+    document.getElementById('addEventForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(e.target));
+        const response = await fetch('/Training/AddEvent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        if (response.ok) {
+            bootstrap.Modal.getInstance(document.getElementById('addEventModal')).hide();
+            calendar.refetchEvents();
+        } else {
+            alert('Błąd zapisu wydarzenia!');
+        }
+    });
+});
+</script>

@@ -1,0 +1,28 @@
+@model MyApp.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Szczegóły użytkownika";
+}
+
+<div class="container mt-4">
+    <h2>Szczegóły użytkownika</h2>
+
+    <div class="card p-3 shadow-sm mt-3">
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Data utworzenia:</strong> @Model.CreatedAt</p>
+        <p><strong>Potwierdzony e-mail:</strong> @(Model.EmailConfirmed ? "Tak" : "Nie")</p>
+        <p><strong>Rola:</strong> @string.Join(", ", ViewBag.Roles)</p>
+
+        <hr />
+
+        <form asp-action="ChangeRole" method="post" class="d-flex gap-2">
+            <input type="hidden" name="userId" value="@Model.Id" />
+            <select name="roleName" class="form-select w-auto">
+                <option>Administrator</option>
+                <option>Klient</option>
+            </select>
+            <button class="btn btn-warning" type="submit">Zmień rolę</button>
+        </form>
+    </div>
+
+    <a class="btn btn-secondary mt-3" asp-action="Users">⬅ Powrót do listy</a>
+</div>

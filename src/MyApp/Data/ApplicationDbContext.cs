@@ -7,9 +7,10 @@ namespace MyApp.Data
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+            : base(options)
+        {
+        }
 
-        // tu później dodamy nasze tabele, np.:
-        // public DbSet<TypZajec> TypyZajec { get; set; } = null!;
+        public DbSet<TrainingEvent> TrainingEvents { get; set; }
     }
 }
