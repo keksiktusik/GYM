@@ -1,0 +1,133 @@
+﻿@model IEnumerable<MyApp.Models.ApplicationUser>
+    @{
+    ViewData["Title"] = "Lista użytkowników";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <style>
+        body {
+            background-color: #fff8fa;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 90vh;
+        }
+
+        /* --- SIDEBAR (ten sam co w Index.cshtml i Classes.cshtml) --- */
+        .sidebar {
+            background-color: #f7dce3;
+            width: 250px;
+            padding: 25px 20px;
+            border-radius: 0 20px 20px 0;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+            .sidebar h3 {
+                color: #a64d79;
+                text-align: center;
+                font-weight: 700;
+                margin-bottom: 25px;
+            }
+
+            .sidebar a {
+                display: block;
+                color: #a64d79;
+                font-weight: 500;
+                text-decoration: none;
+                padding: 10px 15px;
+                border-radius: 10px;
+                margin-bottom: 10px;
+                transition: all 0.3s;
+            }
+
+                .sidebar a:hover {
+                    background-color: #f2b6c1;
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+        /* --- Główna zawartość --- */
+        .content {
+            flex: 1;
+            padding: 40px;
+        }
+
+            .content h2 {
+                color: #a64d79;
+                font-weight: 700;
+                margin-bottom: 30px;
+            }
+
+        /* --- Tabela --- */
+        .card {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-3px);
+            }
+
+        .table th {
+            background-color: #f7dce3;
+            color: #a64d79;
+            border-color: #f7dce3;
+        }
+
+        .table td {
+            border-color: #f7dce3;
+        }
+    </style>
+
+    <div class="admin-container">
+        <!-- 🌸 PANEL BOCZNY -->
+        <div class="sidebar">
+            <h3>🌸 GYM Admin</h3>
+            <a asp-controller="Admin" asp-action="Index">🏠 Dashboard</a>
+            <a asp-controller="Admin" asp-action="Users" style="background-color:#f2b6c1; color:white;">👥 Użytkownicy</a>
+            <a asp-controller="Admin" asp-action="Classes">💪 Zajęcia</a>
+            <a asp-controller="Admin" asp-action="Reservations">📅 Rezerwacje</a>
+            <a asp-controller="Admin" asp-action="Reports">📊 Statystyki</a>
+            <a asp-controller="Account" asp-action="Logout" class="text-danger">🚪 Wyloguj</a>
+        </div>
+
+        <!-- 👥 GŁÓWNA TREŚĆ -->
+        <div class="content">
+            <h2>👥 Lista użytkowników</h2>
+
+            <div class="card shadow-sm p-3" style="background-color:#fff8fa; border-radius:15px;">
+                <table class="table text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Imię i nazwisko</th>
+                            <th>Login</th>
+                            <th>Email</th>
+                            <th>Data rejestracji</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                        int lp = 1;
+                        }
+                        @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@lp</td>
+                            <td>@(string.IsNullOrEmpty(user.FullName) ? "—" : user.FullName)</td>
+                            <td>@user.UserName</td>
+                            <td>@user.Email</td>
+                            <td>@user.CreatedAt.ToString("dd.MM.yyyy")</td>
+                        </tr>
+                        lp++;
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,128 @@
+﻿@*
+    Layout dla aplikacji MyApp (GYM)
+    Styl pudrowo-różowy
+*@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MyApp</title>
+    <script type="importmap"></script>
+
+    <!-- Bootstrap i style -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MyApp.styles.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/theme-pink.css" asp-append-version="true" />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.js'></script>
+
+    <style>
+        /* === GŁÓWNE STYLIZACJE PASKA I STRONY === */
+        body {
+            background-color: #fde9ef;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+        }
+
+        /* Pasek nawigacyjny */
+        .navbar {
+            background-color: #f7dce3 !important;
+            border-bottom: 2px solid #f2b6c1 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        }
+
+        .navbar-brand {
+            color: #a64d79 !important;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #a64d79 !important;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+            .navbar-nav .nav-link:hover {
+                color: #d47b9b !important;
+            }
+
+        .navbar-toggler {
+            background: none !important;
+            border: 1px solid #a64d79 !important;
+        }
+
+        .navbar-toggler-icon {
+            background-image: none !important;
+        }
+
+        /* Usuń resztki niebieskiego tła Bootstrapa */
+        .container, .container-fluid {
+            background-color: transparent !important;
+        }
+
+        /* Stopka */
+        footer {
+            background-color: #f7dce3;
+            color: #a64d79;
+            border-top: 2px solid #f2b6c1;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+
+            footer a {
+                color: #a64d79;
+                font-weight: 500;
+            }
+
+                footer a:hover {
+                    color: #d47b9b;
+                }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light">
+            <div class="w-100 px-4">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">GirlGym</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">Strona główna</a>
+                        </li>
+                    </ul>
+
+                    <partial name="_LoginPartial" />
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid p-0">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer text-muted">
+        <div class="container">
+            &copy; 2025 - GirlGym - <a asp-area="" asp-controller="Home" asp-action="Privacy">Polityka prywatności</a>
+        </div>
+    </footer>
+
+    <!-- Skrypty -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

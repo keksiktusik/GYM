@@ -1,0 +1,97 @@
+﻿@*
+    Layout dla panelu administratora (stały sidebar)
+    Używany we wszystkich widokach Admina
+*@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - GirlGym Admin</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            background-color: #fff8fa;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Stały panel boczny */
+        .sidebar {
+            background-color: #f7dce3;
+            width: 250px;
+            padding: 25px 20px;
+            border-radius: 0 20px 20px 0;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+            .sidebar h3 {
+                color: #a64d79;
+                text-align: center;
+                font-weight: 700;
+                margin-bottom: 25px;
+            }
+
+            .sidebar a {
+                display: block;
+                color: #a64d79;
+                font-weight: 500;
+                text-decoration: none;
+                padding: 10px 15px;
+                border-radius: 10px;
+                margin-bottom: 10px;
+                transition: all 0.3s;
+            }
+
+                .sidebar a:hover {
+                    background-color: #f2b6c1;
+                    color: #fff;
+                }
+
+        /* Główna część strony */
+        main {
+            flex: 1;
+            padding: 40px;
+        }
+
+        footer {
+            background-color: #f7dce3;
+            color: #6b4f5e;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <div class="sidebar">
+            <h3>🌸 GYM Admin</h3>
+            <a asp-controller="Admin" asp-action="Index">🏠 Dashboard</a>
+            <a asp-controller="Admin" asp-action="Users">👥 Użytkownicy</a>
+            <a asp-controller="Admin" asp-action="Classes">💪 Zajęcia</a>
+            <a asp-controller="Admin" asp-action="Reservations">📅 Rezerwacje</a>
+            <a asp-controller="Admin" asp-action="Reports">📊 Statystyki</a>
+            <a asp-controller="Account" asp-action="Logout" class="text-danger">🚪 Wyloguj</a>
+        </div>
+
+        <main>
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        © 2025 - GirlGym Admin Panel 💖
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

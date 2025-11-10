@@ -1,0 +1,335 @@
+﻿@model IEnumerable<MyApp.Models.TypZajec>
+    @{
+    ViewData["Title"] = "Zajęcia";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    }
+
+    <style>
+    body {
+        background-color: #fff8fa;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .admin-container {
+        display: flex;
+        min-height: 90vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background-color: #f7dce3;
+        width: 250px;
+        padding: 25px 20px;
+        border-radius: 0 20px 20px 0;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    }
+
+    .sidebar h3 {
+        color: #a64d79;
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+
+    .sidebar a {
+        display: block;
+        color: #a64d79;
+        font-weight: 500;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: all 0.3s;
+    }
+
+    .sidebar a:hover {
+        background-color: #f2b6c1;
+        color: #fff;
+    }
+
+    .content {
+        flex: 1;
+        padding: 40px;
+    }
+
+    .content h2 {
+        color: #a64d79;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    /* Tabela i karty */
+    .card {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .table th {
+        background-color: #f7dce3;
+        color: #a64d79;
+        border-color: #f7dce3;
+    }
+
+    .table td {
+        border-color: #f7dce3;
+    }
+
+    /* Przyciski */
+    .btn-pink {
+        background-color: #e89bb5;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .btn-pink:hover {
+        background-color: #d47b9b;
+        color: #fff;
+    }
+
+    .btn-outline-pink {
+        background-color: transparent;
+        border: 1px solid #e89bb5;
+        color: #a64d79;
+        border-radius: 8px;
+        padding: 5px 10px;
+        transition: all 0.3s;
+    }
+
+    .btn-outline-pink:hover {
+        background-color: #f7dce3;
+    }
+
+    /* 🌸 MODAL dodawania */
+    #modalBg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.3);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+    }
+
+    #modalForm {
+        background-color: #fff8fa;
+        border: 2px solid #f7dce3;
+        border-radius: 20px;
+        padding: 30px;
+        width: 400px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        color: #a64d79;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    #modalForm input, #modalForm textarea {
+        width: 100%;
+        border: 1px solid #f7dce3;
+        border-radius: 10px;
+        padding: 8px;
+        margin-bottom: 12px;
+        font-family: 'Segoe UI';
+    }
+
+    #modalForm button {
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .btn-close-custom {
+        background-color: #aaa;
+        color: white;
+        margin-left: 10px;
+    }
+
+    .btn-close-custom:hover {
+        background-color: #888;
+    }
+    </style>
+
+    <div class="admin-container">
+        <!-- 🌸 Sidebar -->
+        <div class="sidebar">
+            <h3>🌸 GYM Admin</h3>
+            <a asp-controller="Admin" asp-action="Index">🏠 Dashboard</a>
+            <a asp-controller="Admin" asp-action="Users">👥 Użytkownicy</a>
+            <a asp-controller="Admin" asp-action="Classes" style="background-color:#f2b6c1; color:white;">💪 Zajęcia</a>
+            <a asp-controller="Admin" asp-action="Reservations">📅 Rezerwacje</a>
+            <a asp-controller="Admin" asp-action="Reports">📊 Statystyki</a>
+            <a asp-controller="Account" asp-action="Logout" class="text-danger">🚪 Wyloguj</a>
+        </div>
+
+        <!-- 💪 Treść -->
+        <div class="content">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>💪 Lista zajęć</h2>
+                <button id="openModal" class="btn-pink">➕ Dodaj zajęcia</button>
+            </div>
+
+            <div class="card shadow-sm p-3" style="background-color:#fff8fa;">
+                <table class="table text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nazwa</th>
+                            <th>Opis</th>
+                            <th>Cena (zł)</th>
+                            <th>Czas trwania (min)</th>
+                            <th>Poziom trudności</th>
+                            <th>Data utworzenia</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                        int lp = 1;
+                        }
+                        @foreach (var z in Model)
+                    {
+                        <tr>
+                            <td>@lp</td>
+                            <td>@z.Nazwa</td>
+                            <td>@(string.IsNullOrEmpty(z.Opis) ? "—" : z.Opis)</td>
+                            <td>@z.Cena</td>
+                            <td>@z.CzasTrwania</td>
+                            <td>@z.PoziomTrudnosci</td>
+                            <td>@z.DataUtworzenia.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-pink edit-btn"
+                                        data-id="@z.Id"
+                                        data-nazwa="@z.Nazwa"
+                                        data-opis="@z.Opis"
+                                        data-cena="@z.Cena"
+                                        data-czas="@z.CzasTrwania"
+                                        data-poziom="@z.PoziomTrudnosci"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editClassModal">
+                                    ✏️ Edytuj
+                                </button>
+
+                                <form asp-controller="Admin" asp-action="DeleteClass" asp-route-id="@z.Id" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-outline-pink" onclick="return confirm('Usunąć te zajęcia?')">❌ Usuń</button>
+                                </form>
+                            </td>
+                        </tr>
+                        lp++;
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌸 Modal dodawania -->
+    <div id="modalBg">
+        <div id="modalForm">
+            <h3>➕ Dodaj zajęcia</h3>
+            <form method="post" asp-controller="Admin" asp-action="AddClass">
+                <input type="text" name="Nazwa" placeholder="Nazwa zajęć" required />
+                <textarea name="Opis" placeholder="Opis zajęć"></textarea>
+                <input type="number" name="Cena" placeholder="Cena (zł)" step="0.01" required />
+                <input type="number" name="CzasTrwania" placeholder="Czas trwania (min)" required />
+                <input type="text" name="PoziomTrudnosci" placeholder="Poziom trudności" />
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn-pink">💾 Zapisz</button>
+                    <button type="button" class="btn-close-custom" id="closeModal">Anuluj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🌸 Modal edycji -->
+    <div class="modal fade" id="editClassModal" tabindex="-1" aria-labelledby="editClassModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background:#fff8fa; border-radius:15px;">
+                <div class="modal-header" style="background:#f7dce3; color:#a64d79; border:none;">
+                    <h5 class="modal-title" id="editClassModalLabel">✏️ Edytuj zajęcia</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <form id="editClassForm" asp-controller="Admin" asp-action="EditClass" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-id" name="Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Nazwa zajęć</label>
+                            <input id="edit-nazwa" name="Nazwa" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Opis zajęć</label>
+                            <textarea id="edit-opis" name="Opis" class="form-control"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Cena (zł)</label>
+                                <input id="edit-cena" name="Cena" type="number" step="0.01" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Czas trwania (min)</label>
+                                <input id="edit-czas" name="CzasTrwania" type="number" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Poziom trudności</label>
+                                <input id="edit-poziom" name="PoziomTrudnosci" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="border:none;">
+                        <button type="submit" class="btn" style="background:#e89bb5; color:#fff;">💾 Zapisz zmiany</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            // Modal dodawania
+            const modalBg = document.getElementById('modalBg');
+            const openModal = document.getElementById('openModal');
+            const closeModal = document.getElementById('closeModal');
+
+            openModal.addEventListener('click', () => modalBg.style.display = 'flex');
+            closeModal.addEventListener('click', () => modalBg.style.display = 'none');
+            modalBg.addEventListener('click', e => { if (e.target === modalBg) modalBg.style.display = 'none'; });
+
+            // Modal edycji — wypełnianie danych
+            document.addEventListener('DOMContentLoaded', function () {
+                const editButtons = document.querySelectorAll('.edit-btn');
+                editButtons.forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        document.getElementById('edit-id').value = this.dataset.id;
+                        document.getElementById('edit-nazwa').value = this.dataset.nazwa;
+                        document.getElementById('edit-opis').value = this.dataset.opis;
+                        document.getElementById('edit-cena').value = this.dataset.cena;
+                        document.getElementById('edit-czas').value = this.dataset.czas;
+                        document.getElementById('edit-poziom').value = this.dataset.poziom;
+                    });
+                });
+            });
+        </script>
+    }

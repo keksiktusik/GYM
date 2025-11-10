@@ -1,0 +1,99 @@
+/* ===== PINK THEME – GLOBAL ===== */
+
+/* Zmieniamy zmienne Bootstrapa (linki, primary itp.) */
+:root {
+    --bs-primary: #e89bb5;
+    --bs-primary-rgb: 232,155,181;
+    --bs-link-color: #a64d79;
+    --bs-link-hover-color: #d47b9b;
+}
+
+/* T³o ca³ej strony */
+body {
+    background-color: #fde9ef !important;
+    color: #6b4f5e;
+}
+
+/* NAVBAR + FOOTER */
+.navbar {
+    background-color: #f7dce3 !important;
+    border-bottom: 2px solid #f2b6c1 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1) !important;
+}
+
+    .navbar-brand, .navbar .nav-link {
+        color: #a64d79 !important;
+    }
+
+        .navbar .nav-link:hover {
+            color: #d47b9b !important;
+        }
+
+footer {
+    background-color: #f7dce3 !important;
+    color: #a64d79 !important;
+    border-top: 2px solid #f2b6c1 !important;
+}
+
+/* Karty, tabele */
+.card, .table {
+    background-color: #fff8fa !important;
+    border-color: #f7dce3 !important;
+}
+
+    .table thead {
+        background-color: #f7dce3 !important;
+        color: #a64d79 !important;
+    }
+
+/* Formularze i przyciski */
+.form-control {
+    border-color: #f2b6c1 !important;
+}
+
+.btn-primary {
+    background-color: #e89bb5 !important;
+    border-color: #e89bb5 !important;
+    color: #fff !important;
+}
+
+    .btn-primary:hover {
+        background-color: #d47b9b !important;
+        border-color: #d47b9b !important;
+    }
+
+/* OUTLINES w ró¿u */
+.btn-outline-secondary {
+    border-color: #f2b6c1 !important;
+    color: #a64d79 !important;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #f2b6c1 !important;
+        color: #fff !important;
+    }
+
+/* USUÑ wszêdzie niebieskie t³a i gradienty Bootstrapa */
+.bg-primary {
+    background-color: #f7dce3 !important;
+    color: #a64d79 !important;
+}
+
+.bg-gradient {
+    background-image: none !important;
+}
+
+.table-primary {
+    background-color: #f7dce3 !important;
+    color: #a64d79 !important;
+}
+
+.text-primary {
+    color: #a64d79 !important;
+}
+
+/* Zero przypadkowych bia³ych/niebieskich te³ z kontenerów */
+.container, .container-fluid, header {
+    background-color: transparent !important;
+    background-image: none !important;
+}

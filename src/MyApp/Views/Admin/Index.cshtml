@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Panel administratora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #fff8fa;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .admin-container {
+        display: flex;
+        min-height: 90vh;
+    }
+
+    /* Menu boczne */
+    .sidebar {
+        background-color: #f7dce3;
+        width: 250px;
+        padding: 25px 20px;
+        border-radius: 0 20px 20px 0;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    }
+
+        .sidebar h3 {
+            color: #a64d79;
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: #a64d79;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+            .sidebar a:hover {
+                background-color: #f2b6c1;
+                color: #fff;
+                text-decoration: none;
+            }
+
+    /* Zawartość główna */
+    .content {
+        flex: 1;
+        padding: 40px;
+    }
+
+        .content h2 {
+            color: #a64d79;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+    /* Karty */
+    .card {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: transform 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+    .card-title {
+        color: #a64d79;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    .card p {
+        color: #6b4f5e;
+    }
+
+    .card .number {
+        font-size: 32px;
+        font-weight: 700;
+        color: #d47b9b;
+    }
+
+    /* Siatka kart */
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    /* Przycisk */
+    .btn-pink {
+        background-color: #e89bb5;
+        border: none;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+        .btn-pink:hover {
+            background-color: #d47b9b;
+            color: #fff;
+        }
+</style>
+
+<div class="admin-container">
+    <div class="sidebar">
+        <h3>🌸 GYM Admin</h3>
+        <a asp-controller="Admin" asp-action="Index">🏠 Dashboard</a>
+        <a asp-controller="Admin" asp-action="Users">👥 Użytkownicy</a>
+        <a asp-controller="Admin" asp-action="Classes">💪 Zajęcia</a>
+        <a asp-controller="Admin" asp-action="Reservations">📅 Rezerwacje</a>
+        <a asp-controller="Admin" asp-action="Reports">📊 Statystyki</a>
+        <a asp-controller="Account" asp-action="Logout" class="text-danger">🚪 Wyloguj</a>
+    </div>
+
+    <div class="content">
+        <h2>Witaj w panelu administratora 💕</h2>
+
+        <div class="cards-grid">
+            <!-- Karta Użytkownicy -->
+            <div class="card">
+                <div class="card-title">Użytkownicy</div>
+                <p class="number">23</p>
+                <p>Zarejestrowanych klientów</p>
+                <a asp-controller="Admin" asp-action="Users" class="btn-pink">Zarządzaj</a>
+            </div>
+
+            <!-- Karta Zajęcia -->
+            <div class="card">
+                <div class="card-title">Zajęcia</div>
+                <p class="number">8</p>
+                <p>Aktywnych zajęć w systemie</p>
+                <a asp-controller="Admin" asp-action="Classes" class="btn-pink">Zarządzaj</a>
+            </div>
+
+            <!-- Karta Rezerwacje -->
+            <div class="card">
+                <div class="card-title">Rezerwacje</div>
+                <p class="number">45</p>
+                <p>Bieżące rezerwacje klientów</p>
+                <a asp-controller="Admin" asp-action="Reservations" class="btn-pink">Zobacz</a>
+            </div>
+
+            <!-- Karta Statystyki -->
+            <div class="card">
+                <div class="card-title">Statystyki</div>
+                <p class="number">📈</p>
+                <p>Podgląd aktywności użytkowników</p>
+                <a asp-controller="Admin" asp-action="Reports" class="btn-pink">Otwórz</a>
+            </div>
+        </div>
+    </div>
+</div>

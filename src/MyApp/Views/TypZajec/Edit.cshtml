@@ -1,0 +1,32 @@
+﻿@model MyApp.Models.TypZajec
+@{
+    ViewData["Title"] = "Edytuj typ zajęć";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+    <hr />
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label asp-for="Nazwa" class="form-label"></label>
+            <input asp-for="Nazwa" class="form-control" />
+            <span asp-validation-for="Nazwa" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Opis" class="form-label"></label>
+            <textarea asp-for="Opis" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+            <label asp-for="PoziomTrudnosci" class="form-label"></label>
+            <input asp-for="PoziomTrudnosci" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+        <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
