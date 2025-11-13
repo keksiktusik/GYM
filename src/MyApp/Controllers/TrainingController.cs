@@ -18,31 +18,48 @@ namespace MyApp.Controllers
             _userManager = userManager;
         }
 
-        // 📅 Kalendarz
+        // 📅 Kalendarz widoku
         public IActionResult Calendar()
         {
             return View();
         }
 
-        // 🔹 Pobranie wydarzeń użytkownika (AJAX)
+        // 📌 Pobranie wydarzeń użytkownika
         [HttpGet]
         public async Task<IActionResult> GetEvents()
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
             var events = _context.TrainingEvents
                 .Where(e => e.UserId == user.Id)
-                .Select(e => new { e.Id, e.Title, start = e.Start, end = e.End })
+                .Select(e => new 
+                { 
+                    e.Id, 
+                    e.Title, 
+                    start = e.Start, 
+                    end = e.End 
+                })
                 .ToList();
 
             return Json(events);
         }
 
-        // 🔹 Dodanie nowego wydarzenia
+        // ➕ Dodanie wydarzenia
         [HttpPost]
         public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
         {
             var user = await _userManager.GetUserAsync(User);
-            training.UserId = user.Id;
+            if (user == null)
+                return Unauthorized();
+
+            if (training == null)
+                return BadRequest(new { success = false, error = "Brak danych wydarzenia." });
+
+            // zabezpieczenie przed pustymi wartościami
+            training.Title ??= "Trening";
+            training.UserId = user.Id!;
 
             _context.TrainingEvents.Add(training);
             await _context.SaveChangesAsync();
@@ -50,18 +67,24 @@ namespace MyApp.Controllers
             return Ok(new { success = true });
         }
 
-        // 🔹 Usunięcie wydarzenia
+        // ❌ Usunięcie wydarzenia
         [HttpPost]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            var training = _context.TrainingEvents.FirstOrDefault(e => e.Id == id && e.UserId == user.Id);
-            if (training == null) return NotFound();
+            if (user == null) 
+                return Unauthorized();
+
+            var training = _context.TrainingEvents
+                .FirstOrDefault(e => e.Id == id && e.UserId == user.Id);
+
+            if (training == null)
+                return NotFound(new { success = false, error = "Nie znaleziono wydarzenia." });
 
             _context.TrainingEvents.Remove(training);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { success = true });
         }
     }
 }

@@ -19,50 +19,59 @@ html {
 /* === Styl nowoczesny dla aplikacji fitness === */
 
 body {
-    background: linear-gradient(135deg, #e0f7fa, #e8eaf6);
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    min-height: 100vh;
-}
-
-.container {
-    max-width: 1000px;
-}
-
-h1, h2, h3 {
-    font-weight: 600;
-    color: #2c3e50;
+    background-color: #fff5f8;
+    font-family: 'Poppins', sans-serif;
 }
 
 .card {
     border: none;
-    border-radius: 1rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(255, 182, 193, 0.2);
+    background-color: #fff;
 }
 
-.btn-primary {
-    background: linear-gradient(90deg, #007bff, #00bcd4);
+.btn-pink {
+    background-color: #ff8fab;
     border: none;
-}
-
-    .btn-primary:hover {
-        background: linear-gradient(90deg, #00bcd4, #007bff);
-    }
-
-header {
-    background: linear-gradient(90deg, #007bff, #00bcd4);
     color: white;
-    padding: 20px 0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-weight: 500;
+    border-radius: 10px;
+    transition: 0.3s;
 }
 
-    header h1 {
-        font-weight: 700;
-        letter-spacing: 1px;
-    }
+.btn-pink:hover {
+    background-color: #ffb3c6;
+    color: #fff;
+}
 
-footer {
-    text-align: center;
-    margin-top: 40px;
-    padding: 10px;
-    color: #607d8b;
+.btn-outline-pink {
+    border: 2px solid #ff8fab;
+    color: #ff8fab;
+    border-radius: 10px;
+}
+
+.btn-outline-pink:hover {
+    background-color: #ff8fab;
+    color: #fff;
+}
+
+.table th {
+    background-color: #ffe5ec;
+    color: #d6336c;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fff0f5;
+}
+
+h2, h3, h4 {
+    color: #d6336c;
+    font-weight: 600;
+}
+
+a {
+    color: #d6336c;
+}
+a:hover {
+    color: #ff8fab;
 }

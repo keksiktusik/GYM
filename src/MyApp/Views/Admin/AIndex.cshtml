@@ -1,7 +1,30 @@
 ﻿@{
     ViewData["Title"] = "Panel administratora";
 }
-<div class="container mt-4">
-    <h1>@ViewData["Title"]</h1>
-    <p>Witaj w panelu administratora. Tutaj możesz zarządzać użytkownikami i zajęciami.</p>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🌸 Panel Administratora</h2>
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-3">
+            <div class="card p-4 text-center">
+                <h5 class="fw-bold mb-3">👥 Użytkownicy</h5>
+                <p>Zarządzaj kontami, rolami i statusem użytkowników.</p>
+                <a asp-controller="Admin" asp-action="Users" class="btn btn-pink w-100">Przejdź</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 text-center">
+                <h5 class="fw-bold mb-3">📊 Statystyki</h5>
+                <p>Sprawdź dane o użytkownikach i aktywności w systemie.</p>
+                <a asp-controller="Admin" asp-action="Stats" class="btn btn-pink w-100">Zobacz</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-4 text-center">
+                <h5 class="fw-bold mb-3">💌 Wiadomości</h5>
+                <p>Wyślij komunikat e-mail do wybranego użytkownika.</p>
+                <a asp-controller="Admin" asp-action="Users" class="btn btn-pink w-100">Wyślij</a>
+            </div>
+        </div>
+    </div>
 </div>

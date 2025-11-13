@@ -1,27 +1,73 @@
 @{
     ViewData["Title"] = "Statystyki systemu";
+    // Jedyna deklaracja:
     var roles = ViewBag.RoleStats as Dictionary<string, int>;
 }
 
 <div class="container mt-5">
-    <h2 class="text-center mb-4">📊 Statystyki systemu</h2>
+    <h2 class="text-center mb-5 fw-bold text-pink">📊 Statystyki systemu</h2>
 
-    <div class="card shadow-sm p-4">
-        <p><strong>👥 Liczba wszystkich użytkowników:</strong> @ViewBag.Total</p>
-        <p><strong>📧 Potwierdzone konta:</strong> @ViewBag.Confirmed</p>
-        <p><strong>🚫 Zablokowani użytkownicy:</strong> @ViewBag.Locked</p>
-
-        <hr />
-        <h5>📂 Użytkownicy w rolach:</h5>
-        <ul>
-            @foreach (var item in roles)
-            {
-                <li>@item.Key: <strong>@item.Value</strong></li>
-            }
-        </ul>
-
-        <div class="mt-3">
-            <a asp-action="Users" class="btn btn-secondary">⬅ Powrót do listy</a>
+    <!-- Sekcja z ogólnymi statystykami -->
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-3">
+            <div class="card text-center p-4 shadow-sm border-0">
+                <h5 class="fw-semibold text-pink">👥 Użytkownicy</h5>
+                <p class="display-6 fw-bold text-dark">@ViewBag.Total</p>
+                <p class="text-muted">Wszystkich kont</p>
+            </div>
         </div>
+
+        <div class="col-md-3">
+            <div class="card text-center p-4 shadow-sm border-0">
+                <h5 class="fw-semibold text-pink">📧 Potwierdzone konta</h5>
+                <p class="display-6 fw-bold text-dark">@ViewBag.Confirmed</p>
+                <p class="text-muted">Użytkownicy z aktywnym mailem</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-center p-4 shadow-sm border-0">
+                <h5 class="fw-semibold text-pink">🚫 Zablokowani</h5>
+                <p class="display-6 fw-bold text-dark">@ViewBag.Locked</p>
+                <p class="text-muted">Konta z ograniczonym dostępem</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sekcja z podziałem na role -->
+    <div class="card shadow-sm border-0 mt-5 p-4">
+        <h4 class="fw-semibold text-pink mb-3">📂 Użytkownicy w rolach</h4>
+
+        @if (roles is not null && roles.Any())
+        {
+            <table class="table table-striped text-center align-middle">
+                <thead style="background-color: #ffe5ec; color: #c9184a;">
+                    <tr>
+                        <th>Rola</th>
+                        <th>Liczba użytkowników</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in roles)
+                {
+                    <tr>
+                        <td>@item.Key</td>
+                        <td><strong>@item.Value</strong></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="alert alert-light border-pink">
+                Brak danych o rolach do wyświetlenia.
+            </div>
+        }
+    </div>
+
+    <!-- Powrót -->
+    <div class="text-center mt-4">
+        <a asp-action="Users" class="btn btn-pink px-4">⬅ Powrót do listy</a>
     </div>
 </div>

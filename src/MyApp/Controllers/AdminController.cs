@@ -12,12 +12,15 @@ namespace MyApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender)
+
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender,  SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
+            _signInManager = signInManager;
         }
 
         // 📋 LISTA UŻYTKOWNIKÓW + FILTROWANIE + WYSZUKIWANIE
@@ -63,18 +66,26 @@ namespace MyApp.Controllers
 
         // 🏷️ ZMIANA ROLI
         [HttpPost]
-        public async Task<IActionResult> ChangeRole(string userId, string roleName)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
+public async Task<IActionResult> ChangeRole(string userId, string roleName)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null) return NotFound();
 
-            var currentRoles = await _userManager.GetRolesAsync(user);
-            await _userManager.RemoveFromRolesAsync(user, currentRoles);
-            await _userManager.AddToRoleAsync(user, roleName);
+    var currentRoles = await _userManager.GetRolesAsync(user);
+    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+    await _userManager.AddToRoleAsync(user, roleName);
 
-            TempData["msg"] = $"✅ Rola użytkownika {user.Email} została zmieniona na {roleName}.";
-            return RedirectToAction("Users");
-        }
+    // 🔄 Jeśli zmieniamy rolę aktualnie zalogowanemu użytkownikowi:
+    var currentUser = await _userManager.GetUserAsync(User);
+    if (currentUser != null && currentUser.Id == user.Id)
+    {
+        await _signInManager.RefreshSignInAsync(user);
+    }
+
+    TempData["msg"] = $"Rola użytkownika {user.Email} została zmieniona na {roleName}.";
+    return RedirectToAction("Users");
+}
+
 
         // ✅ BLOKOWANIE / ODBLOKOWANIE KONTA
         [HttpPost]
@@ -119,73 +130,73 @@ namespace MyApp.Controllers
 
         // 💌 WYSYŁKA MAILA DO UŻYTKOWNIKA
         [HttpPost]
-        public async Task<IActionResult> SendMessage(string userId, string message)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                TempData["msg"] = "❌ Nie znaleziono użytkownika.";
-                return RedirectToAction("Users");
-            }
+public async Task<IActionResult> SendMessage(string userId, string message)
+{
+    var user = await _userManager.FindByIdAsync(userId);
+    if (user == null)
+    {
+        TempData["msg"] = "❌ Nie znaleziono użytkownika.";
+        return RedirectToAction("Users");
+    }
 
-            string subject = "📩 Wiadomość od zespołu GYM";
-            string body = $"<p><strong>Zespół GYM przesyła Ci wiadomość:</strong></p><blockquote>{message}</blockquote><br/><p>Pozdrawiamy,<br/><strong>Zespół GYM</strong></p>";
+    if (string.IsNullOrWhiteSpace(user.Email))
+    {
+        TempData["msg"] = "❌ Ten użytkownik nie ma przypisanego adresu e-mail.";
+        return RedirectToAction("Users");
+    }
 
-            try
-            {
-                await _emailSender.SendEmailAsync(user.Email, subject, body);
-                TempData["msg"] = $"✅ Wiadomość e-mail została wysłana do {user.Email}.";
-            }
-            catch (Exception ex)
-            {
-                TempData["msg"] = $"❌ Błąd wysyłki wiadomości: {ex.Message}";
-            }
+    string subject = "📩 Wiadomość od zespołu GYM";
+    string body = $"<p><strong>Zespół GYM przesyła Ci wiadomość:</strong></p><blockquote>{message}</blockquote><br/><p>Pozdrawiamy,<br/><strong>Zespół GYM</strong></p>";
 
-            return RedirectToAction("Users");
-        }
+    try
+    {
+        await _emailSender.SendEmailAsync(user.Email!, subject, body);
+        TempData["msg"] = $"✅ Wiadomość e-mail została wysłana do {user.Email}.";
+    }
+    catch (Exception ex)
+    {
+        TempData["msg"] = $"❌ Błąd wysyłki wiadomości: {ex.Message}";
+    }
 
-        // ❌ USUNIĘCIE UŻYTKOWNIKA
-        [HttpPost]
-        public async Task<IActionResult> DeleteUser(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                await _userManager.DeleteAsync(user);
-                TempData["msg"] = $"🗑️ Użytkownik {user.Email} został usunięty.";
-            }
-            return RedirectToAction("Users");
-        }
+    return RedirectToAction("Users");
+}
+
 
         // 📊 STATYSTYKI SYSTEMU
         public async Task<IActionResult> Stats()
+{
+    var users = _userManager.Users.ToList();
+
+    int total = users.Count;
+    int confirmed = users.Count(u => u.EmailConfirmed);
+    int locked = users.Count(u => u.LockoutEnd != null && u.LockoutEnd > DateTime.UtcNow);
+
+    var roles = _roleManager.Roles.ToList();
+    var roleStats = new Dictionary<string, int>();
+
+    foreach (var role in roles)
+    {
+        var roleName = role.Name ?? "Brak roli";
+        int count = 0;
+
+        foreach (var u in users)
         {
-            var users = _userManager.Users.ToList();
-            int total = users.Count;
-            int confirmed = users.Count(u => u.EmailConfirmed);
-            int locked = users.Count(u => u.LockoutEnd != null && u.LockoutEnd > DateTime.UtcNow);
+            var r = await _userManager.GetRolesAsync(u) ?? new List<string>();
 
-            var roles = _roleManager.Roles.ToList();
-            var roleStats = new Dictionary<string, int>();
-
-            foreach (var role in roles)
-            {
-                int count = 0;
-                foreach (var u in users)
-                {
-                    var r = await _userManager.GetRolesAsync(u);
-                    if (r.Contains(role.Name))
-                        count++;
-                }
-                roleStats[role.Name] = count;
-            }
-
-            ViewBag.Total = total;
-            ViewBag.Confirmed = confirmed;
-            ViewBag.Locked = locked;
-            ViewBag.RoleStats = roleStats;
-
-            return View();
+            if (!string.IsNullOrEmpty(roleName) && r.Contains(roleName))
+                count++;
         }
+
+        roleStats[roleName] = count;
+    }
+
+    ViewBag.Total = total;
+    ViewBag.Confirmed = confirmed;
+    ViewBag.Locked = locked;
+    ViewBag.RoleStats = roleStats;
+
+    return View();
+}
+
     }
 }

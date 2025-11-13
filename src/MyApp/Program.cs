@@ -1,4 +1,4 @@
-﻿using MyApp.Services;
+using MyApp.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
