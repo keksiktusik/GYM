@@ -67,7 +67,7 @@
             <tbody>
                 @foreach (var user in Model)
                 {
-                    var userRoles = await UserManager.GetRolesAsync(user) ?? new List<string>();
+                    var currentRole = ViewBag.UserRoles[user.Id];
 
                     <tr>
                         <td>@user.Email</td>
@@ -88,13 +88,17 @@
                                 <form asp-action="ChangeRole" method="post" class="d-inline">
                                     <input type="hidden" name="userId" value="@user.Id" />
                                     <select name="roleName"
-                                            class="form-select form-select-sm border-pink"
-                                            style="width:auto;">
-                                        @foreach (var role in roles)
-                                        {
-                                            <option>@role</option>
-                                        }
-                                    </select>
+        class="form-select form-select-sm border-pink"
+        style="width:auto;">
+    @foreach (var role in roles)
+    {
+        <option value="@role" selected="@(currentRole == role)">
+    @role
+</option>
+
+    }
+</select>
+
                                     <button type="submit"
                                             class="btn btn-outline-warning btn-sm">
                                         Zmień

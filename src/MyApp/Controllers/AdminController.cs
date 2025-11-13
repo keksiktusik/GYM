@@ -24,31 +24,42 @@ namespace MyApp.Controllers
         }
 
         // 📋 LISTA UŻYTKOWNIKÓW + FILTROWANIE + WYSZUKIWANIE
-        public async Task<IActionResult> Users(string searchString, string roleFilter)
+       public async Task<IActionResult> Users(string searchString, string roleFilter)
+{
+    var users = _userManager.Users.ToList();
+
+    if (!string.IsNullOrEmpty(searchString))
+        users = users.Where(u => u.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    if (!string.IsNullOrEmpty(roleFilter))
+    {
+        var filtered = new List<ApplicationUser>();
+        foreach (var user in users)
         {
-            var users = _userManager.Users.ToList();
-
-            if (!string.IsNullOrEmpty(searchString))
-                users = users.Where(u => u.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase)).ToList();
-
-            if (!string.IsNullOrEmpty(roleFilter))
-            {
-                var filtered = new List<ApplicationUser>();
-                foreach (var user in users)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    if (roles.Contains(roleFilter))
-                        filtered.Add(user);
-                }
-                users = filtered;
-            }
-
-            ViewBag.Roles = _roleManager.Roles.Select(r => r.Name).ToList();
-            ViewBag.SelectedRole = roleFilter;
-            ViewBag.Search = searchString;
-
-            return View(users);
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains(roleFilter))
+                filtered.Add(user);
         }
+        users = filtered;
+    }
+
+    var allRoles = _roleManager.Roles.Select(r => r.Name).ToList();
+    ViewBag.Roles = allRoles;
+    ViewBag.SelectedRole = roleFilter;
+    ViewBag.Search = searchString;
+
+    // ⭐ NAJWAŻNIEJSZE — przekazujemy role KAŻDEGO użytkownika
+    var userRolesDict = new Dictionary<string, string>();
+    foreach (var u in users)
+    {
+        var r = await _userManager.GetRolesAsync(u);
+        userRolesDict[u.Id] = r.FirstOrDefault() ?? "Brak roli";
+    }
+
+    ViewBag.UserRoles = userRolesDict;
+
+    return View(users);
+}
 
         // 🔍 SZCZEGÓŁY UŻYTKOWNIKA
         public async Task<IActionResult> Details(string id)

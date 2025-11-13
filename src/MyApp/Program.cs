@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using MyApp.Data;
 using MyApp.Models;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // -----------------------------------------------------------
@@ -21,40 +20,44 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // -----------------------------------------------------------
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;  // wymaga potwierdzenia maila
+    options.SignIn.RequireConfirmedAccount = true; 
     options.Password.RequiredLength = 6;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = true;
     options.Password.RequireNonAlphanumeric = false;
 })
-.AddRoles<IdentityRole>() // dodajemy role (Administrator, Klient)
+.AddRoles<IdentityRole>() // WAŻNE – role Admin/Klient
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders()
-.AddDefaultUI(); // użycie gotowego UI do logowania/rejestracji
+.AddDefaultUI();
+
+// EMAIL
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 // -----------------------------------------------------------
-// 3️⃣  KONTROLERY + RAZOR PAGES
+// 3️⃣  MVC + RAZOR
 // -----------------------------------------------------------
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
 var app = builder.Build();
 
 // -----------------------------------------------------------
-// 4️⃣  MIGRACJE / TWORZENIE BAZY
+// 4️⃣  AUTOMATYCZNE MIGRACJE + TWORZENIE RÓL + ADMIN
 // -----------------------------------------------------------
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+
+    // Migracje
     var db = services.GetRequiredService<ApplicationDbContext>();
     db.Database.Migrate();
 
-    // Seed ról i administratora
+    // Role + pierwszy admin
     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-    // Role: Administrator i Klient
+    // ROLE
     string[] roles = { "Administrator", "Klient" };
     foreach (var role in roles)
     {
@@ -62,7 +65,7 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
     }
 
-    // Konto administratora (tylko jedno)
+    // ADMIN
     string adminEmail = "admin@myapp.local";
     string adminPass = "Admin123!";
 
@@ -74,13 +77,14 @@ using (var scope = app.Services.CreateScope())
             Email = adminEmail,
             EmailConfirmed = true
         };
+
         await userManager.CreateAsync(admin, adminPass);
         await userManager.AddToRoleAsync(admin, "Administrator");
     }
 }
 
 // -----------------------------------------------------------
-// 5️⃣  KONFIGURACJA ŚRODOWISKA
+// 5️⃣  ŚRODOWISKO
 // -----------------------------------------------------------
 if (app.Environment.IsDevelopment())
 {
@@ -97,7 +101,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // musi być przed Authorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 // -----------------------------------------------------------
@@ -107,6 +111,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapRazorPages(); // logowanie/rejestracja
+app.MapRazorPages();
 
 app.Run();
