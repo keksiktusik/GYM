@@ -45,5 +45,18 @@ namespace MyApp.Models
 
         // 🔸  kiedy utworzono wydarzenie
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        public bool IsRecurring { get; set; } = false;
+
+// "Daily", "Weekly", "Monthly"
+public string? RecurrenceInterval { get; set; }
+
+// Dni tygodnia dla Weekly — np. "Mon,Wed,Fri"
+public string? RecurrenceDays { get; set; }
+
+// Do kiedy powtarzać cykl
+public DateTime? RecurrenceEndDate { get; set; }
+ 
+ public Guid? RecurrenceGroupId { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace MyApp.Controllers
             return View();
         }
 
-        // 📌 Pobranie wydarzeń użytkownika
+        // 📌 Pobranie wydarzeń użytkownika (również info o cykliczności)
         [HttpGet]
         public async Task<IActionResult> GetEvents()
         {
@@ -46,64 +46,117 @@ namespace MyApp.Controllers
                     e.Id,
                     e.Title,
                     start = e.Start,
-                    end = e.End
+                    end = e.End,
+                    isRecurring = e.IsRecurring
                 })
                 .ToList();
 
             return Json(events);
         }
 
-        // ➕ Dodanie wydarzenia
-        [HttpPost]
-        public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
+       // ➕ Dodanie wydarzenia (pojedynczego lub cyklicznego)
+[HttpPost]
+public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+        return Unauthorized(new { success = false, error = "Użytkownik niezalogowany." });
+
+    if (training == null)
+        return BadRequest(new { success = false, error = "Brak danych wydarzenia." });
+
+    training.UserId = user.Id!;
+    training.Title ??= "Trening";
+
+    // ===============================
+    // 1️⃣ ZWYKŁY TRENING (NIECykliczny)
+    // ===============================
+    if (!training.IsRecurring)
+    {
+        try
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-                return Unauthorized();
-
-            if (training == null)
-                return BadRequest(new { success = false, error = "Brak danych wydarzenia." });
-
-            // zabezpieczenie przed pustymi wartościami
-            training.Title ??= "Trening";
-            training.UserId = user.Id!;
-
             _context.TrainingEvents.Add(training);
             await _context.SaveChangesAsync();
 
-            // 💌 POWIADOMIENIE MAILOWE O DODANIU TRENINGU
-            if (!string.IsNullOrWhiteSpace(user.Email))
-            {
-                var startLocal = training.Start.ToLocalTime();
-
-                string subject = "✅ Zaplanowano Twój trening – GYM";
-
-                string body = $@"
-                    <p>Cześć,</p>
-                    <p>Twój trening <strong>{training.Title}</strong> został pomyślnie dodany do kalendarza.</p>
-                    <p>
-                        <strong>Data:</strong> {startLocal:dd.MM.yyyy}<br/>
-                        <strong>Godzina:</strong> {startLocal:HH\\:mm}
-                    </p>
-                    <p>W każdej chwili możesz edytować lub usunąć trening w aplikacji GYM.</p>
-                    <br/>
-                    <p>Do zobaczenia na macie! 🧘‍♀️<br/><strong>Zespół GYM</strong></p>
-                ";
-
-                try
-                {
-                    await _emailSender.SendEmailAsync(user.Email!, subject, body);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Błąd wysyłki maila (nowy trening): {ex.Message}");
-                }
-            }
+            await SendImmediateEmail(user, training);
 
             return Ok(new { success = true });
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { success = false, error = ex.Message });
+        }
+    }
 
-        // ❌ Usunięcie wydarzenia
+    // ===============================
+    // 2️⃣ CYKLICZNY TRENING
+    // ===============================
+    if (training.RecurrenceEndDate == null)
+        return BadRequest(new { success = false, error = "Brak daty zakończenia cyklu." });
+
+    var groupId = Guid.NewGuid();
+    training.RecurrenceGroupId = groupId;
+    training.IsRecurring = true;
+
+    // zapisujemy bazowy opis cyklu
+    _context.TrainingEvents.Add(training);
+
+    DateTime date = training.Start;
+    DateTime end = training.RecurrenceEndDate.Value;
+
+    List<TrainingEvent> generatedEvents = new();
+
+    while (date <= end)
+    {
+        if (training.RecurrenceInterval == "Weekly")
+        {
+            var days = training.RecurrenceDays?.Split(',') ?? Array.Empty<string>();
+            var weekdayCode = date.DayOfWeek.ToString().Substring(0, 3);
+
+            if (!days.Contains(weekdayCode))
+            {
+                date = date.AddDays(1);
+                continue;
+            }
+        }
+
+        generatedEvents.Add(new TrainingEvent
+        {
+            UserId = user.Id!,
+            Title = training.Title,
+            Description = training.Description,
+            Category = training.Category,
+            Start = date,
+            End = date.Add(training.End - training.Start),
+            IsRecurring = false,
+            RecurrenceGroupId = groupId
+        });
+
+        date = training.RecurrenceInterval switch
+        {
+            "Daily" => date.AddDays(1),
+            "Weekly" => date.AddDays(1),
+            "Monthly" => date.AddMonths(1),
+            _ => date.AddDays(1)
+        };
+    }
+
+    try
+    {
+        _context.TrainingEvents.AddRange(generatedEvents);
+        await _context.SaveChangesAsync();
+
+        await SendImmediateEmail(user, training);
+
+        return Ok(new { success = true });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { success = false, error = ex.Message });
+    }
+}
+
+        // ❌ Usunięcie pojedynczego wydarzenia
         [HttpPost]
         public async Task<IActionResult> DeleteEvent(int id)
         {
@@ -122,5 +175,115 @@ namespace MyApp.Controllers
 
             return Ok(new { success = true });
         }
+
+        // 💌 Wysyłka maila po utworzeniu treningu
+        private async Task SendImmediateEmail(ApplicationUser user, TrainingEvent training)
+        {
+            if (string.IsNullOrWhiteSpace(user.Email))
+                return;
+
+            var startLocal = training.Start.ToLocalTime();
+            string subject = "📆 Zaplanowano trening – GYM";
+
+            string body = $@"
+                <p>Cześć!</p>
+                <p>Zaplanowano nowy <strong>{training.Title}</strong>.</p>
+                <p>
+                    <strong>Data:</strong> {startLocal:dd.MM.yyyy} <br/>
+                    <strong>Godzina:</strong> {startLocal:HH\\:mm}
+                </p>
+                <br/>
+                <p>Powodzenia! 💪<br/>Zespół GYM</p>
+            ";
+
+            await _emailSender.SendEmailAsync(user.Email!, subject, body);
+        }
+
+        // 🔁 Lista cyklicznych planów użytkownika
+        [HttpGet]
+        public async Task<IActionResult> GetRecurringPlans()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
+
+            var recurring = _context.TrainingEvents
+                .Where(e => e.UserId == user.Id && e.IsRecurring)
+                .Select(e => new
+                {
+                    e.Id,
+                    e.Title,
+                    e.RecurrenceInterval,
+                    e.RecurrenceDays,
+                    e.RecurrenceEndDate,
+                    e.RecurrenceGroupId
+                })
+                .ToList();
+
+            return Json(recurring);
+        }
+
+        // ❌ Usuwanie całego cyklu
+        [HttpPost]
+        public async Task<IActionResult> DeleteRecurrence([FromBody] Guid groupId)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var events = _context.TrainingEvents
+                .Where(e => e.UserId == user.Id && e.RecurrenceGroupId == groupId)
+                .ToList();
+
+            _context.TrainingEvents.RemoveRange(events);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true });
+        }
+
+        // ✏ Edytowanie cyklu
+        [HttpPost]
+        public async Task<IActionResult> EditRecurrence([FromBody] TrainingEvent updated)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var original = _context.TrainingEvents
+                .FirstOrDefault(e => e.UserId == user.Id &&
+                                     e.Id == updated.Id &&
+                                     e.IsRecurring);
+
+            if (original == null)
+                return NotFound();
+
+            original.Title = updated.Title;
+            original.Description = updated.Description;
+            original.RecurrenceInterval = updated.RecurrenceInterval;
+            original.RecurrenceDays = updated.RecurrenceDays;
+            original.RecurrenceEndDate = updated.RecurrenceEndDate;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true });
+        }
+        [HttpPost]
+public async Task<IActionResult> UpdateEvent([FromBody] TrainingEvent updated)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null) return Unauthorized();
+
+    var existing = _context.TrainingEvents
+        .FirstOrDefault(e => e.Id == updated.Id && e.UserId == user.Id);
+
+    if (existing == null)
+        return NotFound();
+
+    existing.Title = updated.Title;
+    existing.Description = updated.Description;
+    existing.Start = updated.Start;
+    existing.End = updated.End;
+
+    await _context.SaveChangesAsync();
+    return Ok(new { success = true });
+}
     }
 }

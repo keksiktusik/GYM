@@ -6,28 +6,30 @@
 <header>
     <div class="container text-center">
         <h1>System rezerwacji fitness</h1>
-        <p class="mb-0">Panel zdrowia – Kalkulator BMI i kalendarz zajęć</p>
+        <p class="mb-0">Panel zdrowia – Kalkulator BMI i Twój kalendarz zajęć</p>
     </div>
 </header>
 
 <div class="container mt-5">
     <div class="row g-4 align-items-center">
-        <!-- Lewa kolumna – formularz BMI -->
+
+        <!-- BMI -->
         <div class="col-md-6">
-            <div class="card p-4">
+            <div class="card p-4 shadow-sm">
                 <h3 class="mb-3 text-center text-primary">Kalkulator BMI</h3>
+
                 <form asp-action="Index" method="post">
                     @Html.AntiForgeryToken()
                     <div class="mb-3">
                         <label asp-for="HeightCm" class="form-label fw-semibold"></label>
-                        <input asp-for="HeightCm" class="form-control" type="number" step="0.1" min="1" />
-                        <span asp-validation-for="HeightCm" class="text-danger small"></span>
+                        <input asp-for="HeightCm" class="form-control" type="number" step="0.1" />
                     </div>
+
                     <div class="mb-3">
                         <label asp-for="WeightKg" class="form-label fw-semibold"></label>
-                        <input asp-for="WeightKg" class="form-control" type="number" step="0.1" min="1" />
-                        <span asp-validation-for="WeightKg" class="text-danger small"></span>
+                        <input asp-for="WeightKg" class="form-control" type="number" step="0.1" />
                     </div>
+
                     <div class="d-grid">
                         <button class="btn btn-primary btn-lg">Oblicz BMI</button>
                     </div>
@@ -35,16 +37,21 @@
             </div>
         </div>
 
-        <!-- Prawa kolumna – ilustracja -->
+        <!-- obrazek -->
         <div class="col-md-6 text-center">
             <img src="https://cdn-icons-png.flaticon.com/512/2965/2965879.png"
-                 alt="fitness" class="img-fluid" style="max-height: 300px;">
+                 class="img-fluid" style="max-height: 290px;">
         </div>
+
     </div>
 
-    <!-- Sekcja kalendarza -->
-    <div class="card p-4 mt-5">
-        <h3 class="text-center mb-3 text-primary">Kalendarz</h3>
+    <!-- KALENDARZ PODGLĄD -->
+    <div class="card p-4 mt-5 shadow-sm">
+        <h3 class="text-center mb-3 text-primary">Kalendarz Twoich treningów</h3>
+
+        <p class="text-center text-muted">
+            ➕ Aby dodać lub edytować trening, przejdź do: <a href="/Training/Calendar" class="fw-bold text-primary">MÓJ KALENDARZ</a>
+        </p>
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <button id="prev" class="btn btn-outline-secondary btn-sm">← Poprzedni</button>
@@ -69,186 +76,99 @@
     </div>
 </div>
 
-<!-- Modal do dodawania treningu -->
-<div class="modal fade" id="addTrainingModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="trainingForm">
-        <div class="modal-header">
-          <h5 class="modal-title">Dodaj trening</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="mb-2">
-            <label class="form-label">Data</label>
-            <input type="text" id="selectedDate" name="Date" class="form-control" readonly />
-          </div>
-          <div class="mb-2">
-            <label class="form-label">Godzina rozpoczęcia</label>
-            <input type="time" name="Start" class="form-control" required />
-          </div>
-          <div class="mb-2">
-            <label class="form-label">Godzina zakończenia</label>
-            <input type="time" name="End" class="form-control" required />
-          </div>
-          <div class="mb-2">
-            <label class="form-label">Typ treningu</label>
-            <select name="Title" class="form-select">
-    <option>Cardio</option>
-    <option>Siłowy</option>
-    <option>Stretching</option>
-    <option>Zajęcia grupowe</option>
-    <option>Crossfit</option>
-    <option>Joga</option>
-    <option>Pilates</option>
-    <option>Inne</option>
-</select>
-          </div>
-          <div class="mb-2">
-            <label class="form-label">Opis treningu</label>
-            <textarea name="Description" class="form-control" rows="2"></textarea>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Zapisz</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<script>
+let currentDate = new Date();
+let events = [];
 
-<footer class="text-center mt-4 text-muted">
-    <p>© 2025 System rezerwacji fitness | Projekt ASP.NET MVC Core</p>
-</footer>
+// Kolory treningów
+const trainingColors = {
+    "Cardio": "#74b9ff",
+    "Siłowy": "#d63031",
+    "Stretching": "#00b894",
+    "Zajęcia grupowe": "#e17055",
+    "Crossfit": "#6c5ce7",
+    "Joga": "#fdcb6e",
+    "Pilates": "#00cec9",
+    "Inne": "#636e72"
+};
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-    <script>
-        const monthYear = document.getElementById('monthYear');
-        const calendarBody = document.querySelector('#calendar tbody');
-        const prevBtn = document.getElementById('prev');
-        const nextBtn = document.getElementById('next');
-        let currentDate = new Date();
-        let events = [];
-
-        // 🎨 Mapowanie typów treningów na kolory
-        const trainingColors = {
-            "Cardio": "#74b9ff",          // jasnoniebieski
-            "Siłowy": "#d63031",          // czerwony
-            "Stretching": "#00b894",      // zielony
-            "Zajęcia grupowe": "#e17055", // pomarańczowy
-            "Inne": "#636e72",            // szary
-            "Crossfit": "#6c5ce7",        // fioletowy
-            "Joga": "#fdcb6e",            // żółty
-            "Pilates": "#00cec9"          // morski
-        };
-
-        // 🔹 Pobierz wydarzenia z backendu
-        async function loadEvents() {
-            const res = await fetch('/Training/GetEvents');
-            if (res.ok) {
-                events = await res.json();
-                renderCalendar(currentDate);
-            }
-        }
-
-        // 🔹 Renderowanie kalendarza
-        function renderCalendar(date) {
-            const year = date.getFullYear();
-            const month = date.getMonth();
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const firstWeekday = (firstDay.getDay() + 6) % 7;
-            const daysInMonth = lastDay.getDate();
-
-            const months = [
-                "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-                "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
-            ];
-            monthYear.textContent = `${months[month]} ${year}`;
-            calendarBody.innerHTML = "";
-
-            let row = document.createElement('tr');
-            for (let i = 0; i < firstWeekday; i++) row.appendChild(document.createElement('td'));
-
-            for (let day = 1; day <= daysInMonth; day++) {
-                const cell = document.createElement('td');
-                cell.textContent = day;
-                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-                // znajdź wszystkie treningi w tym dniu
-                const dayEvents = events.filter(e => e.start.startsWith(dateString));
-
-                // 🔹 jeśli są jakieś treningi, koloruj odpowiednio
-                if (dayEvents.length > 0) {
-                    const uniqueTitles = [...new Set(dayEvents.map(e => e.title))];
-                    const color = trainingColors[uniqueTitles[0]] || "#0984e3";
-                    cell.style.backgroundColor = color;
-                    cell.style.color = "#fff";
-                    cell.classList.add("fw-bold");
-                    cell.title = uniqueTitles.join(", "); // podpowiedź po najechaniu myszką
-                }
-
-                // kliknięcie dnia → otwarcie modala
-                cell.style.cursor = 'pointer';
-                cell.addEventListener('click', () => openAddModal(dateString));
-                row.appendChild(cell);
-
-                if ((firstWeekday + day) % 7 === 0) {
-                    calendarBody.appendChild(row);
-                    row = document.createElement('tr');
-                }
-            }
-            calendarBody.appendChild(row);
-        }
-
-        // 🔹 Otwórz modal dodawania treningu
-        function openAddModal(date) {
-            document.getElementById('selectedDate').value = date;
-            const modal = new bootstrap.Modal(document.getElementById('addTrainingModal'));
-            modal.show();
-        }
-
-        // 🔹 Zapisz trening
-        document.getElementById('trainingForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = Object.fromEntries(new FormData(e.target));
-            const startDateTime = `${formData.Date}T${formData.Start}`;
-            const endDateTime = `${formData.Date}T${formData.End}`;
-
-            const data = {
-                Title: formData.Title,
-                Description: formData.Description,
-                Start: startDateTime,
-                End: endDateTime
-            };
-
-            const response = await fetch('/Training/AddEvent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-
-            if (response.ok) {
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addTrainingModal'));
-                modal.hide();
-                await loadEvents();
-            } else {
-                alert("⚠️ Błąd podczas zapisu treningu!");
-            }
-        });
-
-        prevBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            renderCalendar(currentDate);
-        });
-        nextBtn.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            renderCalendar(currentDate);
-        });
-
-        loadEvents();
-    </script>
+// Pobierz eventy
+async function loadEvents() {
+    const res = await fetch('/Training/GetEvents');
+    if (res.ok) {
+        events = await res.json();
+        renderCalendar(currentDate);
+    }
 }
 
+function renderCalendar(date) {
+    const calendarBody = document.querySelector("#calendar tbody");
+    calendarBody.innerHTML = "";
+
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    document.getElementById("monthYear").textContent =
+        date.toLocaleString("pl-PL", { month: "long", year: "numeric" });
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+
+    const startWeekday = (firstDay.getDay() + 6) % 7;
+    const totalDays = lastDay.getDate();
+
+    let row = document.createElement("tr");
+
+    // pusty start
+    for (let i = 0; i < startWeekday; i++)
+        row.appendChild(document.createElement("td"));
+
+    for (let day = 1; day <= totalDays; day++) {
+
+        const cell = document.createElement("td");
+        cell.textContent = day;
+
+        const dateString =
+            `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+        const dayEvents = events.filter(e => e.start.startsWith(dateString));
+
+        if (dayEvents.length > 0) {
+            const e = dayEvents[0];
+            const color = trainingColors[e.title] || "#0984e3";
+
+            cell.style.backgroundColor = color;
+            cell.style.color = "white";
+            cell.style.fontWeight = "bold";
+
+            // tooltip
+            let tooltip = dayEvents
+                .map(ev => `${ev.title} (${ev.start.substring(11, 16)}-${ev.end.substring(11, 16)})`)
+                .join("\n");
+
+            cell.title = tooltip;
+        }
+
+        row.appendChild(cell);
+
+        if ((startWeekday + day) % 7 === 0) {
+            calendarBody.appendChild(row);
+            row = document.createElement("tr");
+        }
+    }
+
+    calendarBody.appendChild(row);
+}
+
+document.getElementById("prev").addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar(currentDate);
+});
+
+document.getElementById("next").addEventListener("click", () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar(currentDate);
+});
+
+loadEvents();
+</script>
