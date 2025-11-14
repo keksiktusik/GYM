@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using MyApp.Models;
 using MyApp.Data;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Linq;
+
 namespace MyApp.Controllers
 {
     [Authorize]
@@ -13,14 +15,17 @@ namespace MyApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public TrainingController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IEmailSender emailSender)
+        public TrainingController(
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
             _emailSender = emailSender;
         }
 
-        // 📅 Kalendarz widoku
+        // 📅 Widok kalendarza
         public IActionResult Calendar()
         {
             return View();
@@ -36,12 +41,12 @@ namespace MyApp.Controllers
 
             var events = _context.TrainingEvents
                 .Where(e => e.UserId == user.Id)
-                .Select(e => new 
-                { 
-                    e.Id, 
-                    e.Title, 
-                    start = e.Start, 
-                    end = e.End 
+                .Select(e => new
+                {
+                    e.Id,
+                    e.Title,
+                    start = e.Start,
+                    end = e.End
                 })
                 .ToList();
 
@@ -50,58 +55,60 @@ namespace MyApp.Controllers
 
         // ➕ Dodanie wydarzenia
         [HttpPost]
-public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
-{
-    var user = await _userManager.GetUserAsync(User);
-    if (user == null)
-        return Unauthorized();
-
-    if (training == null)
-        return BadRequest(new { success = false, error = "Brak danych wydarzenia." });
-
-    // zabezpieczenie przed pustymi wartościami
-    training.Title ??= "Trening";
-    training.UserId = user.Id!;
-
-    _context.TrainingEvents.Add(training);
-    await _context.SaveChangesAsync();
-
-    // 💌 POWIADOMIENIE E-MAIL O ZAPLANOWANYM TRENINGU
-    if (!string.IsNullOrWhiteSpace(user.Email))
-    {
-        var startLocal = training.Start.ToLocalTime(); // jeśli przechowujesz w UTC
-        string subject = "📅 Przypomnienie o zaplanowanym treningu – GYM";
-        string body = $@"
-            <p>Cześć,</p>
-            <p>Twój trening <strong>{training.Title}</strong> został zaplanowany.</p>
-            <p><strong>Data:</strong> {startLocal:dd.MM.yyyy}<br/>
-               <strong>Godzina:</strong> {startLocal:HH\\:mm}</p>
-            <p>Jeśli potrzebujesz, możesz edytować lub usunąć trening bezpośrednio w kalendarzu w aplikacji GYM.</p>
-            <br/>
-            <p>Pozdrawiamy,<br/><strong>Zespół GYM</strong></p>
-        ";
-
-        try
+        public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
         {
-            await _emailSender.SendEmailAsync(user.Email!, subject, body);
-        }
-        catch (Exception ex)
-        {
-            // opcjonalnie: logowanie błędu, na razie bez wywalania aplikacji
-            Console.WriteLine($"Błąd wysyłki maila powiadomienia: {ex.Message}");
-        }
-    }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+                return Unauthorized();
 
-    return Ok(new { success = true });
-}
+            if (training == null)
+                return BadRequest(new { success = false, error = "Brak danych wydarzenia." });
 
+            // zabezpieczenie przed pustymi wartościami
+            training.Title ??= "Trening";
+            training.UserId = user.Id!;
+
+            _context.TrainingEvents.Add(training);
+            await _context.SaveChangesAsync();
+
+            // 💌 POWIADOMIENIE MAILOWE O DODANIU TRENINGU
+            if (!string.IsNullOrWhiteSpace(user.Email))
+            {
+                var startLocal = training.Start.ToLocalTime();
+
+                string subject = "✅ Zaplanowano Twój trening – GYM";
+
+                string body = $@"
+                    <p>Cześć,</p>
+                    <p>Twój trening <strong>{training.Title}</strong> został pomyślnie dodany do kalendarza.</p>
+                    <p>
+                        <strong>Data:</strong> {startLocal:dd.MM.yyyy}<br/>
+                        <strong>Godzina:</strong> {startLocal:HH\\:mm}
+                    </p>
+                    <p>W każdej chwili możesz edytować lub usunąć trening w aplikacji GYM.</p>
+                    <br/>
+                    <p>Do zobaczenia na macie! 🧘‍♀️<br/><strong>Zespół GYM</strong></p>
+                ";
+
+                try
+                {
+                    await _emailSender.SendEmailAsync(user.Email!, subject, body);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Błąd wysyłki maila (nowy trening): {ex.Message}");
+                }
+            }
+
+            return Ok(new { success = true });
+        }
 
         // ❌ Usunięcie wydarzenia
         [HttpPost]
         public async Task<IActionResult> DeleteEvent(int id)
         {
             var user = await _userManager.GetUserAsync(User);
-            if (user == null) 
+            if (user == null)
                 return Unauthorized();
 
             var training = _context.TrainingEvents
