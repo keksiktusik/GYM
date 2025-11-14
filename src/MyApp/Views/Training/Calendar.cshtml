@@ -230,183 +230,126 @@
   </div>
 </div>
 
-<!-- FullCalendar JS -->
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.js"></script>
+@section Scripts {
 
-<script>
-document.addEventListener('DOMContentLoaded', async function () {
+    <!-- FullCalendar JS -->
+  
+    <script>
+// TEST FULLCALENDAR
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("FULLCALENDAR:", FullCalendar);
+});
+</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', async function () {
 
-    // 🔄 Pokazywanie/ukrywanie sekcji cykliczności
-    document.getElementById("isRecurring").addEventListener("change", function () {
-        document.getElementById("recurrenceOptions").style.display =
-            this.checked ? "block" : "none";
-    });
-
-    // ====================================
-    // 1️⃣ FULLCALENDAR
-    // ====================================
-    var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-        initialView: 'dayGridMonth',
-        selectable: true,
-        events: '/Training/GetEvents',
-
-        dateClick: function(info) {
-            const modal = new bootstrap.Modal(document.getElementById('calendarAddEventModal'));
-            document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
-            document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
-            modal.show();
-        },
-
-        eventClick: function(info) {
-            openEditModal(info.event);
-        },
-
-        eventDidMount: function(info) {
-            if (info.event.extendedProps.isRecurring) {
-                const titleEl = info.el.querySelector('.fc-event-main');
-                if (titleEl) {
-                    titleEl.innerHTML = "🔁 " + info.event.title;
-                }
-                info.el.style.backgroundColor = "#ffd6e7";
-                info.el.style.borderColor = "#ff80b3";
-            }
-        }
-    });
-
-    calendar.render();
-
-    // ====================================
-    // 2️⃣ DODAWANIE TRENINGU
-    // ====================================
-
-    document.getElementById('addEventForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const form = Object.fromEntries(new FormData(e.target));
-        form.IsRecurring = document.getElementById('isRecurring').checked;
-
-        if (form.IsRecurring) {
-            form.RecurrenceInterval = document.getElementById('recurrenceInterval').value;
-            form.RecurrenceDays = [...document.querySelectorAll('.weekday:checked')]
-                .map(x => x.value)
-                .join(',');
-            form.RecurrenceEndDate = document.getElementById('recurrenceEndDate').value;
-        }
-
-        const res = await fetch('/Training/AddEvent', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
-        });
-
-        if (res.ok) {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('calendarAddEventModal')).hide();
-            calendar.refetchEvents();
-            loadRecurringPlans();
-        }
-    });
-
-    // ====================================
-    // 3️⃣ EDYCJA TRENINGU
-    // ====================================
-
-    function openEditModal(event) {
-        const modal = new bootstrap.Modal(document.getElementById('editEventModal'));
-
-        document.getElementById("editEventId").value = event.id;
-        document.getElementById("editTitle").value = event.title;
-        document.getElementById("editDescription").value = event.extendedProps.description || "";
-        document.getElementById("editStart").value = event.startStr.substring(0,16);
-        document.getElementById("editEnd").value = event.endStr.substring(0,16);
-
-        modal.show();
-    }
-
-    document.getElementById('editEventForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const form = Object.fromEntries(new FormData(e.target));
-
-        const res = await fetch('/Training/UpdateEvent', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(form)
-        });
-
-        if (res.ok) {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('editEventModal')).hide();
-            calendar.refetchEvents();
-        }
-    });
-
-    // ====================================
-    // 4️⃣ USUWANIE
-    // ====================================
-
-    window.deleteSingleEvent = async function() {
-        const id = document.getElementById("editEventId").value;
-
-        if (!confirm("Czy na pewno usunąć ten trening?")) return;
-
-        await fetch('/Training/DeleteEvent', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(id)
-        });
-
-        bootstrap.Modal.getOrCreateInstance(document.getElementById('editEventModal')).hide();
-        calendar.refetchEvents();
-    }
-
-    // ====================================
-    // 5️⃣ CYKLICZNE PLANY
-    // ====================================
-
-    async function loadRecurringPlans() {
-        const res = await fetch('/Training/GetRecurringPlans');
-        const plans = await res.json();
-
-        document.getElementById('cycleCount').innerText = plans.length;
-
-        const container = document.getElementById('recurringList');
-        container.innerHTML = "";
-
-        if (plans.length === 0) {
-            container.innerHTML = "<p class='text-muted'>Brak cyklicznych planów.</p>";
+        if (typeof FullCalendar === "undefined") {
+            console.error("❌ FullCalendar nie został załadowany!");
+            alert("Błąd: FullCalendar nie wczytał się.");
             return;
         }
 
-        plans.forEach(p => {
-            const days = p.recurrenceDays ? p.recurrenceDays.replace(/,/g, ", ") : "-";
+        console.log("✅ FullCalendar załadowany poprawnie!");
 
-            container.innerHTML += `
-                <div class="card p-3 mb-2 shadow-sm border-pink">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <strong>${p.title}</strong><br/>
-                            <span class="text-muted">${p.recurrenceInterval} • ${days} • do ${p.recurrenceEndDate?.substring(0,10)}</span>
-                        </div>
+        // ============================
+        // 1️⃣ TWORZENIE KALENDARZA
+        // ============================
+        var calendar = new FullCalendar.Calendar(
+            document.getElementById('calendar'),
+            {
+                initialView: 'dayGridMonth',
+                selectable: true,
+                events: '/Training/GetEvents',
 
-                        <button class="btn btn-outline-danger btn-sm" onclick="deleteCycle('${p.recurrenceGroupId}')">Usuń</button>
-                    </div>
-                </div>
-            `;
+                dateClick: function(info) {
+                    const modal = new bootstrap.Modal(document.getElementById('calendarAddEventModal'));
+                    document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
+                    document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
+                    modal.show();
+                },
+
+                eventClick: function(info) {
+                    openEditModal(info.event);
+                },
+
+                eventDidMount: function(info) {
+                    if (info.event.extendedProps.isRecurring) {
+                        const titleEl = info.el.querySelector('.fc-event-main');
+                        if (titleEl) titleEl.innerHTML = "🔁 " + info.event.title;
+                        info.el.style.backgroundColor = "#ffd6e7";
+                        info.el.style.borderColor = "#ff80b3";
+                    }
+                }
+            }
+        );
+
+        calendar.render();
+        console.log("📅 Kalendarz wyrenderowany!");
+
+        // ============================
+        // 2️⃣ EDYCJA TRENINGU
+        // ============================
+
+        function openEditModal(event) {
+            const modal = new bootstrap.Modal(document.getElementById('editEventModal'));
+
+            document.getElementById("editEventId").value = event.id;
+            document.getElementById("editTitle").value = event.title;
+            document.getElementById("editDescription").value = event.extendedProps.description || "";
+            document.getElementById("editStart").value = event.startStr.substring(0,16);
+            document.getElementById("editEnd").value = event.endStr.substring(0,16);
+
+            modal.show();
+        }
+
+        document.getElementById('editEventForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = Object.fromEntries(new FormData(e.target));
+
+            const res = await fetch('/Training/UpdateEvent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form)
+            });
+
+            if (res.ok) {
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('editEventModal')).hide();
+                calendar.refetchEvents();
+            }
         });
-    }
 
-    loadRecurringPlans();
+        // ============================
+        // 3️⃣ USUWANIE JEDNEGO EVENTU
+        // ============================
 
-    window.deleteCycle = async function(groupId) {
-        if (!confirm("Czy na pewno usunąć cały cykl?")) return;
+        window.deleteSingleEvent = async function() {
+            const id = document.getElementById("editEventId").value;
+            if (!confirm("Czy na pewno usunąć ten trening?")) return;
 
-        await fetch('/Training/DeleteRecurrence', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(groupId)
-        });
+            await fetch('/Training/DeleteEvent', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(id)
+            });
 
-        calendar.refetchEvents();
+            bootstrap.Modal.getOrCreateInstance(document.getElementById('editEventModal')).hide();
+            calendar.refetchEvents();
+        };
+
+        // ============================
+        // 4️⃣ CYKLICZNE PLANY
+        // ============================
+
+        async function loadRecurringPlans() {
+            const res = await fetch('/Training/GetRecurringPlans');
+            const plans = await res.json();
+            document.getElementById('cycleCount').innerText = plans.length;
+        }
+
         loadRecurringPlans();
-    }
-});
-</script>
+
+    });
+    </script>
+
+}
