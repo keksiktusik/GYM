@@ -1,0 +1,148 @@
+@{
+    ViewData["Title"] = "Raporty miesięczne";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center fw-bold text-pink mb-4">📊 Raporty miesięczne</h2>
+
+    <!-- 🔍 Filtr miesiąca -->
+    <form method="get" class="row mb-4">
+        <div class="col-md-4">
+            <select name="month" class="form-control border-pink">
+                @for (int m = 1; m <= 12; m++)
+                {
+                    <option value="@m" selected="@(m == ViewBag.Month)">
+                        @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <input type="number" name="year" value="@ViewBag.Year" class="form-control border-pink" />
+        </div>
+
+        <div class="col-md-4">
+            <button class="btn btn-pink w-100">Filtruj</button>
+        </div>
+    </form>
+
+    <!-- 📦 Karty -->
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 border-pink text-center">
+                <h4 class="text-pink">Nowi użytkownicy</h4>
+                <p class="fs-3 fw-bold">@ViewBag.NewUsers</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 border-pink text-center">
+                <h4 class="text-pink">Ilość treningów</h4>
+                <p class="fs-3 fw-bold">@ViewBag.AllTrainings</p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3 border-pink">
+                <h4 class="text-center text-pink">Top kategorie</h4>
+                <ul class="list-group mt-2">
+                    @foreach (var cat in ViewBag.PopularCategories)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            @cat.Category
+                            <span class="fw-bold">@cat.Count</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- WYKRESY -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="mt-5">
+        <h3 class="text-center text-pink mb-3">📈 Nowi użytkownicy</h3>
+        <canvas id="usersChart"></canvas>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="text-center text-pink mb-3">🏋️ Ilość treningów</h3>
+        <canvas id="trainingChart"></canvas>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="text-center text-pink mb-3">🔥 Najpopularniejsze kategorie</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+</div>
+
+<script>
+    const gymPink = 'rgba(255, 120, 150, 0.8)';
+    const gymPinkBorder = 'rgba(255, 100, 140, 1)';
+
+    // === WYKRES 1 ===
+    new Chart(document.getElementById('usersChart'), {
+        type: 'line',
+        data: {
+            labels: ['@ViewBag.Month.@ViewBag.Year'],
+            datasets: [{
+                label: 'Nowi użytkownicy',
+                data: [@ViewBag.NewUsers],
+                backgroundColor: gymPink,
+                borderColor: gymPinkBorder,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3
+            }]
+        }
+    });
+
+    // === WYKRES 2 ===
+    new Chart(document.getElementById('trainingChart'), {
+        type: 'bar',
+        data: {
+            labels: ['@ViewBag.Month.@ViewBag.Year'],
+            datasets: [{
+                label: 'Treningi',
+                data: [@ViewBag.AllTrainings],
+                backgroundColor: gymPink,
+                borderColor: gymPinkBorder,
+                borderWidth: 2,
+            }]
+        }
+    });
+
+    // === WYKRES 3 ===
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'pie',
+        data: {
+            labels: [
+                @foreach (var c in ViewBag.PopularCategories)
+                {
+                    @Html.Raw($"\"{c.Category}\",")
+                }
+            ],
+            datasets: [{
+                data: [
+                    @foreach (var c in ViewBag.PopularCategories)
+                    {
+                        @Html.Raw($"{c.Count},")
+                    }
+                ],
+                backgroundColor: [
+                    'rgba(255, 120, 150, 0.7)',
+                    'rgba(255, 160, 180, 0.7)',
+                    'rgba(255, 200, 210, 0.7)',
+                    'rgba(255, 140, 160, 0.7)',
+                    'rgba(255, 180, 190, 0.7)'
+                ],
+                borderColor: gymPinkBorder,
+                borderWidth: 1
+            }]
+        }
+    });
+</script>

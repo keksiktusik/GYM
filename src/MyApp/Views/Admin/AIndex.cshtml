@@ -4,7 +4,10 @@
 
 <div class="container mt-5">
     <h2 class="text-center mb-4">🌸 Panel Administratora</h2>
+
     <div class="row g-4 justify-content-center">
+
+        <!-- 👥 Użytkownicy -->
         <div class="col-md-3">
             <div class="card p-4 text-center">
                 <h5 class="fw-bold mb-3">👥 Użytkownicy</h5>
@@ -12,6 +15,8 @@
                 <a asp-controller="Admin" asp-action="Users" class="btn btn-pink w-100">Przejdź</a>
             </div>
         </div>
+
+        <!-- 📊 Statystyki -->
         <div class="col-md-3">
             <div class="card p-4 text-center">
                 <h5 class="fw-bold mb-3">📊 Statystyki</h5>
@@ -19,6 +24,8 @@
                 <a asp-controller="Admin" asp-action="Stats" class="btn btn-pink w-100">Zobacz</a>
             </div>
         </div>
+
+        <!-- 💌 Wiadomości -->
         <div class="col-md-3">
             <div class="card p-4 text-center">
                 <h5 class="fw-bold mb-3">💌 Wiadomości</h5>
@@ -26,5 +33,15 @@
                 <a asp-controller="Admin" asp-action="Users" class="btn btn-pink w-100">Wyślij</a>
             </div>
         </div>
+
+        <!-- 📅 Raporty miesięczne -->
+        <div class="col-md-3">
+            <div class="card p-4 text-center">
+                <h5 class="fw-bold mb-3">📅 Raporty miesięczne</h5>
+                <p>Analiza nowych użytkowników, treningów i kategorii.</p>
+                <a asp-controller="Admin" asp-action="Reports" class="btn btn-pink w-100">Otwórz</a>
+            </div>
+        </div>
+
     </div>
 </div>

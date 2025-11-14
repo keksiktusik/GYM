@@ -18,6 +18,21 @@
             <strong>@TempData["msg"]</strong>
         </div>
     }
+    <!-- 📅 Raporty miesięczne -->
+<div class="card shadow-sm border-pink p-4 mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h4 class="fw-bold text-pink mb-1">📅 Raporty miesięczne</h4>
+            <p class="mb-0">Przegląd nowych użytkowników, treningów oraz najpopularniejszych kategorii w wybranym miesiącu.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a asp-controller="Admin" asp-action="Reports" class="btn btn-pink px-4 w-100">
+                Otwórz raporty
+            </a>
+        </div>
+    </div>
+</div>
+
 
     <!-- 🔍 Wyszukiwanie i filtrowanie -->
     <div class="card shadow-sm border-0 p-4 mb-4">

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MyApp.Models;
 using Microsoft.AspNetCore.Identity.UI.Services;
-
+using MyApp.Data;
 namespace MyApp.Controllers
 {
     [Authorize(Roles = "Administrator")]
@@ -13,15 +13,22 @@ namespace MyApp.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ApplicationDbContext _context;
 
 
-        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender,  SignInManager<ApplicationUser> signInManager)
+        public AdminController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IEmailSender emailSender,  SignInManager<ApplicationUser> signInManager, ApplicationDbContext context )
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _emailSender = emailSender;
             _signInManager = signInManager;
+            _context = context;  
         }
+        // 🌸 PANEL ADMINA (dashboard)
+public IActionResult Index()
+{
+    return View("AIndex");
+}
 
         // 📋 LISTA UŻYTKOWNIKÓW + FILTROWANIE + WYSZUKIWANIE
        public async Task<IActionResult> Users(string searchString, string roleFilter)
@@ -208,6 +215,45 @@ public async Task<IActionResult> SendMessage(string userId, string message)
 
     return View();
 }
+// 📊 RAPORTY MIESIĘCZNE
+public async Task<IActionResult> Reports(int? month, int? year)
+{
+    var selectedMonth = month ?? DateTime.Now.Month;
+    var selectedYear  = year ?? DateTime.Now.Year;
+
+    // --- 1) Liczba nowych użytkowników ---
+    var users = _userManager.Users.ToList();
+    int newUsers = users.Count(u =>
+        u.EmailConfirmed &&
+        u.CreatedAt.Month == selectedMonth &&
+        u.CreatedAt.Year == selectedYear
+    );
+
+    // --- 2) Ilość treningów wykonanych przez wszystkich ---
+    int allTrainings = _context.TrainingEvents
+        .Count(t =>
+            t.Start.Month == selectedMonth &&
+            t.Start.Year == selectedYear
+        );
+
+    // --- 3) Najpopularniejsze kategorie zajęć ---
+    var popularCategories = _context.TrainingEvents
+        .Where(t => t.Start.Month == selectedMonth && t.Start.Year == selectedYear)
+        .GroupBy(t => t.Title)
+        .Select(g => new { Category = g.Key, Count = g.Count() })
+        .OrderByDescending(g => g.Count)
+        .Take(5)
+        .ToList();
+
+    ViewBag.Month = selectedMonth;
+    ViewBag.Year = selectedYear;
+    ViewBag.NewUsers = newUsers;
+    ViewBag.AllTrainings = allTrainings;
+    ViewBag.PopularCategories = popularCategories;
+
+    return View();
+}
+
 
     }
 }
