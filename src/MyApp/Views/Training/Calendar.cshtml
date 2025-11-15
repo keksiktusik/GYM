@@ -2,16 +2,11 @@
     ViewData["Title"] = "Mój kalendarz";
 }
 
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.css' rel='stylesheet' />
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.js'></script>
-
 <style>
-    /* --- PANEL LEWY --- */
     .calendar-wrapper {
         display: flex;
         gap: 25px;
     }
-
     .sidebar {
         width: 280px;
         background: #ffe9f3;
@@ -20,13 +15,11 @@
         height: fit-content;
         box-shadow: 0 3px 10px rgba(255, 192, 203, 0.3);
     }
-
     .sidebar h4 {
         color: #d63384;
         font-weight: bold;
         margin-bottom: 15px;
     }
-
     .stat-box {
         background: white;
         border-radius: 15px;
@@ -34,8 +27,6 @@
         margin-bottom: 10px;
         border-left: 5px solid #ff8bb3;
     }
-
-    /* --- FullCalendar styl --- */
     #calendar {
         flex-grow: 1;
         background: white;
@@ -43,13 +34,6 @@
         border-radius: 20px;
         box-shadow: 0 3px 10px rgba(255, 192, 203, 0.25);
     }
-
-    /* Ikony typów */
-    .icon-cardio { color: #ff6f91; }
-    .icon-silowy { color: #6fa3ff; }
-    .icon-stretch { color: #c77dff; }
-    .icon-grupowy { color: #ffd166; }
-    .icon-inne { color: #adb5bd; }
 </style>
 
 <div class="container mt-4">
@@ -58,60 +42,53 @@
 
     <div class="calendar-wrapper">
 
-        <!-- =======================
-             LEWY PANEL (SIDEBAR)
-        =========================== -->
+        <!-- ◀️ LEWY PANEL -->
         <div class="sidebar">
 
             <h4>📊 Statystyki</h4>
 
             <div class="stat-box">
                 🔜 Najbliższy trening:<br />
-                <strong id="nextTraining">Ładowanie...</strong>
+                <strong id="stat-next-training">Ładowanie...</strong>
             </div>
 
             <div class="stat-box">
                 🔁 Cykliczne plany:<br />
-                <strong id="cycleCount">0</strong>
+                <strong id="stat-recurring">0</strong>
             </div>
 
             <div class="stat-box">
                 🗓 Treningi w tym miesiącu:<br />
-                <strong id="monthCount">0</strong>
+                <strong id="stat-monthly">0</strong>
             </div>
 
             <h4 class="mt-4">🏷 Typy treningów</h4>
-
-            <p><span class="icon-cardio">❤️</span> Cardio</p>
-            <p><span class="icon-silowy">💪</span> Trening siłowy</p>
-            <p><span class="icon-stretch">🧘</span> Stretching</p>
-            <p><span class="icon-grupowy">👥</span> Zajęcia grupowe</p>
-            <p><span class="icon-inne">⭐</span> Inne</p>
+            <p>❤️ Cardio</p>
+            <p>💪 Siłowy</p>
+            <p>🧘 Stretching</p>
+            <p>👥 Grupowy</p>
+            <p>⭐ Inne</p>
 
         </div>
 
-        <!-- =======================
-             PRAWA STRONA – KALENDARZ
-        =========================== -->
+        <!-- 🗓 PRAWY PANEL – KALENDARZ -->
         <div id="calendar"></div>
 
     </div>
 
-    <!-- =======================
-         LISTA CYKLICZNYCH PLANÓW
-    =========================== -->
+
+    <!-- 🔁 LISTA CYKLICZNYCH PLANÓW -->
     <div class="container mt-5">
         <h3 class="text-pink fw-bold">🔁 Twoje cykliczne plany</h3>
-        <div id="recurringList" class="mt-3">
+        <div id="recurringList">
             <p class="text-muted">Ładowanie...</p>
         </div>
     </div>
 
 </div>
 
-<!-- ==========================
-     MODAL – DODAWANIE TRENINGU
-============================== -->
+
+<!-- MODAL – DODAWANIE TRENINGU -->
 <div class="modal fade" id="calendarAddEventModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -124,32 +101,31 @@
         <div class="modal-body">
 
           <div class="mb-2">
-            <label class="form-label">Data i godzina rozpoczęcia</label>
+            <label class="form-label">Start</label>
             <input type="datetime-local" name="Start" class="form-control" required />
           </div>
 
           <div class="mb-2">
-            <label class="form-label">Data i godzina zakończenia</label>
+            <label class="form-label">Koniec</label>
             <input type="datetime-local" name="End" class="form-control" required />
           </div>
 
           <div class="mb-2">
             <label class="form-label">Typ treningu</label>
             <select name="Title" class="form-select">
-              <option value="Cardio">Cardio ❤️</option>
-              <option value="Trening siłowy">Trening siłowy 💪</option>
-              <option value="Stretching">Stretching 🧘</option>
-              <option value="Zajęcia grupowe">Zajęcia grupowe 👥</option>
-              <option value="Inne">Inne ⭐</option>
+              <option value="Cardio">Cardio</option>
+              <option value="Siłowy">Siłowy</option>
+              <option value="Stretching">Stretching</option>
+              <option value="Grupowy">Grupowy</option>
+              <option value="Inne">Inne</option>
             </select>
           </div>
 
           <div class="mb-2">
             <label class="form-label">Opis</label>
-            <textarea name="Description" class="form-control" rows="2"></textarea>
+            <textarea name="Description" class="form-control"></textarea>
           </div>
 
-          <!-- Cykliczny -->
           <div class="form-check my-3">
               <input class="form-check-input" type="checkbox" id="isRecurring" />
               <label class="form-check-label fw-bold">Cykliczny trening</label>
@@ -157,37 +133,40 @@
 
           <div id="recurrenceOptions" class="p-3 border rounded" style="display:none; background:#fff0f6;">
               <label class="fw-bold">Częstotliwość:</label>
-              <select id="recurrenceInterval" class="form-select border-pink">
+              <select id="recurrenceInterval" class="form-select">
                   <option value="Daily">Codziennie</option>
                   <option value="Weekly">Co tydzień</option>
                   <option value="Monthly">Co miesiąc</option>
               </select>
 
               <label class="mt-2 fw-bold">Dni tygodnia:</label>
-              <div class="d-flex gap-3 flex-wrap ms-2">
-                  <label><input type="checkbox" class="weekday" value="Mon" /> Pon</label>
-                  <label><input type="checkbox" class="weekday" value="Tue" /> Wt</label>
-                  <label><input type="checkbox" class="weekday" value="Wed" /> Śr</label>
-                  <label><input type="checkbox" class="weekday" value="Thu" /> Czw</label>
-                  <label><input type="checkbox" class="weekday" value="Fri" /> Pt</label>
-                  <label><input type="checkbox" class="weekday" value="Sat" /> Sob</label>
-                  <label><input type="checkbox" class="weekday" value="Sun" /> Niedz</label>
+              <div class="d-flex gap-3 flex-wrap">
+                  <label><input type="checkbox" class="weekday" value="Mon"> Pon</label>
+                  <label><input type="checkbox" class="weekday" value="Tue"> Wt</label>
+                  <label><input type="checkbox" class="weekday" value="Wed"> Śr</label>
+                  <label><input type="checkbox" class="weekday" value="Thu"> Czw</label>
+                  <label><input type="checkbox" class="weekday" value="Fri"> Pt</label>
+                  <label><input type="checkbox" class="weekday" value="Sat"> Sob</label>
+                  <label><input type="checkbox" class="weekday" value="Sun"> Niedz</label>
               </div>
 
               <label class="mt-3 fw-bold">Powtarzaj do:</label>
-              <input type="date" id="recurrenceEndDate" class="form-control border-pink" />
+              <input type="date" id="recurrenceEndDate" class="form-control" />
           </div>
 
         </div>
 
         <div class="modal-footer">
-          <button type="submit" class="btn btn-pink">Zapisz</button>
+          <button type="submit" class="btn btn-primary">Zapisz</button>
         </div>
 
       </form>
     </div>
   </div>
 </div>
+
+
+<!-- MODAL – EDYCJA -->
 <div class="modal fade" id="editEventModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -223,133 +202,264 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" onclick="deleteSingleEvent()">Usuń</button>
-          <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+          <button type="submit" class="btn btn-primary">Zapisz</button>
         </div>
+
       </form>
     </div>
   </div>
 </div>
 
+
+
 @section Scripts {
 
-    <!-- FullCalendar JS -->
-  
-    <script>
-// TEST FULLCALENDAR
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("FULLCALENDAR:", FullCalendar);
-});
-</script>
-    <script>
-    document.addEventListener('DOMContentLoaded', async function () {
+<script>
 
-        if (typeof FullCalendar === "undefined") {
-            console.error("❌ FullCalendar nie został załadowany!");
-            alert("Błąd: FullCalendar nie wczytał się.");
+//////////////////////////////////////////////////////////////////////////////
+//                              KALENDARZ
+//////////////////////////////////////////////////////////////////////////////
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("FullCalendar:", FullCalendar);
+
+    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        locale: 'pl',
+        timeZone: 'local',
+        selectable: true,
+
+        events: '/Training/GetEvents',
+
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        },
+
+        dateClick(info) {
+            const modal = new bootstrap.Modal(document.getElementById('calendarAddEventModal'));
+            document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
+            document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
+            modal.show();
+        },
+
+        eventClick(info) {
+            openEditModal(info.event);
+        }
+    });
+
+    calendar.render();
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                         EDYCJA WYDARZENIA
+//////////////////////////////////////////////////////////////////////////////
+
+    function openEditModal(event) {
+        const modal = new bootstrap.Modal(document.getElementById('editEventModal'));
+
+        document.getElementById("editEventId").value = event.id;
+        document.getElementById("editTitle").value = event.title;
+        document.getElementById("editDescription").value = event.extendedProps.description || "";
+        document.getElementById("editStart").value = event.startStr.substring(0, 16);
+        document.getElementById("editEnd").value = event.endStr.substring(0, 16);
+
+        modal.show();
+    }
+
+    document.getElementById("editEventForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const formData = Object.fromEntries(new FormData(e.target));
+
+        const res = await fetch("/Training/UpdateEvent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+
+        if (res.ok) {
+            bootstrap.Modal.getOrCreateInstance(document.getElementById("editEventModal")).hide();
+            calendar.refetchEvents();
+        }
+    });
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                           USUWANIE EVENTU
+//////////////////////////////////////////////////////////////////////////////
+
+    window.deleteSingleEvent = async function () {
+        const id = document.getElementById("editEventId").value;
+        if (!confirm("Usunąć?")) return;
+
+        await fetch("/Training/DeleteEvent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(id)
+        });
+
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("editEventModal")).hide();
+        calendar.refetchEvents();
+    };
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                              STATYSTYKI
+//////////////////////////////////////////////////////////////////////////////
+
+    function loadNextTraining() {
+        fetch("/Training/GetNextTraining")
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById("stat-next-training");
+
+                if (!data.exists) {
+                    el.innerHTML = "Brak zaplanowanych treningów.";
+                } else {
+                    let start = new Date(data.start);
+                    el.innerHTML = `${start.toLocaleDateString("pl-PL")} • ${start.toLocaleTimeString("pl-PL", {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    })} — ${data.title}`;
+                }
+            });
+    }
+
+    function loadRecurringCount() {
+        fetch("/Training/GetRecurringPlans")
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById("stat-recurring").innerText = data.length;
+            });
+    }
+
+    function loadMonthlyCount() {
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = today.getMonth() + 1;
+
+        fetch(`/Training/GetMonthlyCount?year=${y}&month=${m}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById("stat-monthly").innerText = data.count;
+            });
+    }
+
+    loadNextTraining();
+    loadRecurringCount();
+    loadMonthlyCount();
+
+
+//////////////////////////////////////////////////////////////////////////////
+//                           DODAWANIE WYDARZENIA
+//////////////////////////////////////////////////////////////////////////////
+
+    function fixDate(dateString) {
+        if (!dateString) return null;
+        return dateString.length === 16 ? dateString + ":00" : dateString;
+    }
+
+    document.getElementById("addEventForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const isRecurring = document.getElementById("isRecurring").checked;
+
+        let selectedDays = [];
+        document.querySelectorAll(".weekday:checked").forEach(d => selectedDays.push(d.value));
+const endDateRaw = document.getElementById("recurrenceEndDate").value;
+        const payload = {
+    Title: this.Title.value,
+    Description: this.Description.value,
+    Start: fixDate(this.Start.value),
+    End: fixDate(this.End.value),
+    IsRecurring: isRecurring,
+    RecurrenceInterval: isRecurring ? document.getElementById("recurrenceInterval").value : null,
+    RecurrenceDays: isRecurring ? selectedDays.join(",") : null,
+    RecurrenceEndDate: isRecurring && endDateRaw 
+        ? endDateRaw + "T23:59:59"
+        : null
+};
+
+        console.log("WYSYŁAM PAYLOAD:", payload);
+
+        const res = await fetch("/Training/AddEvent", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+});
+
+// --- NOWE: pokaż odpowiedź RAW ---
+const raw = await res.text();
+console.log("RAW RESPONSE:", raw);
+
+if (!res.ok) {
+    alert("Błąd serwera:\n" + raw);
+    return;
+}
+
+const result = JSON.parse(raw);
+
+if (result.success) {
+    location.reload();
+} else {
+    alert("Błąd: " + result.error);
+}
+    });
+
+});
+
+document.getElementById("isRecurring").addEventListener("change", function () {
+    const box = document.getElementById("recurrenceOptions");
+    box.style.display = this.checked ? "block" : "none";
+
+    if (this.checked) {
+        const endInput = document.getElementById("recurrenceEndDate");
+        if (!endInput.value) {
+            let def = new Date();
+            def.setMonth(def.getMonth() + 1);
+            endInput.value = def.toISOString().split("T")[0];
+        }
+    }
+});
+async function loadRecurringPlans() {
+    try {
+        const res = await fetch("/Training/GetRecurringPlans");
+        if (!res.ok) {
+            document.getElementById("recurringList").innerHTML =
+                "<p class='text-danger'>Błąd pobierania planów</p>";
             return;
         }
 
-        console.log("✅ FullCalendar załadowany poprawnie!");
+        const plans = await res.json();
+        const box = document.getElementById("recurringList");
 
-        // ============================
-        // 1️⃣ TWORZENIE KALENDARZA
-        // ============================
-        var calendar = new FullCalendar.Calendar(
-            document.getElementById('calendar'),
-            {
-                initialView: 'dayGridMonth',
-                selectable: true,
-                events: '/Training/GetEvents',
-
-                dateClick: function(info) {
-                    const modal = new bootstrap.Modal(document.getElementById('calendarAddEventModal'));
-                    document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
-                    document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
-                    modal.show();
-                },
-
-                eventClick: function(info) {
-                    openEditModal(info.event);
-                },
-
-                eventDidMount: function(info) {
-                    if (info.event.extendedProps.isRecurring) {
-                        const titleEl = info.el.querySelector('.fc-event-main');
-                        if (titleEl) titleEl.innerHTML = "🔁 " + info.event.title;
-                        info.el.style.backgroundColor = "#ffd6e7";
-                        info.el.style.borderColor = "#ff80b3";
-                    }
-                }
-            }
-        );
-
-        calendar.render();
-        console.log("📅 Kalendarz wyrenderowany!");
-
-        // ============================
-        // 2️⃣ EDYCJA TRENINGU
-        // ============================
-
-        function openEditModal(event) {
-            const modal = new bootstrap.Modal(document.getElementById('editEventModal'));
-
-            document.getElementById("editEventId").value = event.id;
-            document.getElementById("editTitle").value = event.title;
-            document.getElementById("editDescription").value = event.extendedProps.description || "";
-            document.getElementById("editStart").value = event.startStr.substring(0,16);
-            document.getElementById("editEnd").value = event.endStr.substring(0,16);
-
-            modal.show();
+        if (!plans || plans.length === 0) {
+            box.innerHTML = "<p class='text-muted'>Brak cyklicznych planów.</p>";
+            return;
         }
 
-        document.getElementById('editEventForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+       box.innerHTML = plans
+    .map(p => `
+        <div class="p-3 mb-2 border rounded" style="background:white;">
+            <strong>${p.title}</strong><br>
+            🔁 ${p.recurrenceInterval ?? "-"} (${p.recurrenceDays ?? "-"})<br>
+            📅 Do: ${p.recurrenceEndDate ? p.recurrenceEndDate.substring(0,10) : "-"}
+        </div>
+    `)
+    .join("");
 
-            const form = Object.fromEntries(new FormData(e.target));
+    }
+    catch (e) {
+        console.error("Recurring plans error:", e);
+        document.getElementById("recurringList").innerHTML =
+            "<p class='text-danger'>Błąd podczas odczytywania danych.</p>";
+    }
+}
 
-            const res = await fetch('/Training/UpdateEvent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form)
-            });
-
-            if (res.ok) {
-                bootstrap.Modal.getOrCreateInstance(document.getElementById('editEventModal')).hide();
-                calendar.refetchEvents();
-            }
-        });
-
-        // ============================
-        // 3️⃣ USUWANIE JEDNEGO EVENTU
-        // ============================
-
-        window.deleteSingleEvent = async function() {
-            const id = document.getElementById("editEventId").value;
-            if (!confirm("Czy na pewno usunąć ten trening?")) return;
-
-            await fetch('/Training/DeleteEvent', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(id)
-            });
-
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('editEventModal')).hide();
-            calendar.refetchEvents();
-        };
-
-        // ============================
-        // 4️⃣ CYKLICZNE PLANY
-        // ============================
-
-        async function loadRecurringPlans() {
-            const res = await fetch('/Training/GetRecurringPlans');
-            const plans = await res.json();
-            document.getElementById('cycleCount').innerText = plans.length;
-        }
-
-        loadRecurringPlans();
-
-    });
-    </script>
+loadRecurringPlans();
+</script>
 
 }

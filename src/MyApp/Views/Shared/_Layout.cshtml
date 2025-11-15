@@ -13,9 +13,8 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MyApp.styles.css" asp-append-version="true" />
 
-    <!-- Kalendarz FullCalendar -->
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/main.min.js"></script>
+    <!-- ✅ FullCalendar CSS (GLOBAL BUILD) -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -92,7 +91,15 @@
     <!-- 🔹 Skrypty -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ✅ FullCalendar JS (GLOBAL BUILD) — TEN SKRYPT BYŁ BRAK! -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+    <!-- 🔹 Główne skrypty -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- 🔹 Skrypty stron (np. Calendar.cshtml) -->
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

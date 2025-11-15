@@ -56,6 +56,7 @@ namespace MyApp.Controllers
 
        // ➕ Dodanie wydarzenia (pojedynczego lub cyklicznego)
 [HttpPost]
+[Route("Training/AddEvent")]
 public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
 {
     var user = await _userManager.GetUserAsync(User);
@@ -91,7 +92,21 @@ public async Task<IActionResult> AddEvent([FromBody] TrainingEvent training)
     // ===============================
     // 2️⃣ CYKLICZNY TRENING
     // ===============================
-    if (training.RecurrenceEndDate == null)
+   // 🔧 Naprawa: upewniamy się że dane cyklu nie są nullem
+if (training.IsRecurring)
+{
+    if (string.IsNullOrWhiteSpace(training.RecurrenceInterval))
+        training.RecurrenceInterval = Request.Form["RecurrenceInterval"];
+
+    if (string.IsNullOrWhiteSpace(training.RecurrenceDays))
+        training.RecurrenceDays = Request.Form["RecurrenceDays"];
+
+    if (training.RecurrenceEndDate == null && !string.IsNullOrWhiteSpace(Request.Form["RecurrenceEndDate"]))
+        training.RecurrenceEndDate = DateTime.Parse(Request.Form["RecurrenceEndDate"]);
+}
+
+  
+   if (training.RecurrenceEndDate == null)
         return BadRequest(new { success = false, error = "Brak daty zakończenia cyklu." });
 
     var groupId = Guid.NewGuid();
@@ -285,5 +300,45 @@ public async Task<IActionResult> UpdateEvent([FromBody] TrainingEvent updated)
     await _context.SaveChangesAsync();
     return Ok(new { success = true });
 }
+[HttpGet]
+public async Task<IActionResult> GetNextTraining()
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null) return Unauthorized();
+
+    var now = DateTime.UtcNow;
+
+    var next = _context.TrainingEvents
+        .Where(e => e.UserId == user.Id && e.Start > now)
+        .OrderBy(e => e.Start)
+        .FirstOrDefault();
+
+    if (next == null)
+        return Json(new { exists = false });
+
+    return Json(new
+    {
+        exists = true,
+        title = next.Title,
+        start = next.Start
+    });
+}
+[HttpGet]
+public async Task<IActionResult> GetMonthlyCount(int year, int month)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null) return Unauthorized();
+
+    var start = new DateTime(year, month, 1);
+    var end = start.AddMonths(1);
+
+    int count = _context.TrainingEvents
+        .Where(e => e.UserId == user.Id && e.Start >= start && e.Start < end)
+        .Count();
+
+    return Json(new { count });
+}
+
+
     }
 }
