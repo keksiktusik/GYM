@@ -84,6 +84,11 @@
             <p class="text-muted">Ładowanie...</p>
         </div>
     </div>
+    <div class="container mt-5">
+        <h3 class="text-pink fw-bold">📊 Statystyka aktywności</h3>
+        <canvas id="statsChart" style="max-height: 350px;"></canvas>
+    </div>
+
 
 </div>
 
@@ -165,301 +170,367 @@
   </div>
 </div>
 
-
 <!-- MODAL – EDYCJA -->
 <div class="modal fade" id="editEventModal" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="editEventForm">
-        <div class="modal-header">
-          <h5 class="modal-title">Edytuj trening</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editEventForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edytuj trening</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="editEventId" name="Id" />
+
+                    <div class="mb-2">
+                        <label>Typ treningu</label>
+                        <select id="editTitle" name="Title" class="form-select">
+                            <option value="Cardio">Cardio</option>
+                            <option value="Siłowy">Siłowy</option>
+                            <option value="Stretching">Stretching</option>
+                            <option value="Grupowy">Grupowy</option>
+                            <option value="Inne">Inne</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Opis</label>
+                        <textarea id="editDescription" name="Description" class="form-control"></textarea>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Start</label>
+                        <input id="editStart" name="Start" type="datetime-local" class="form-control" />
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Koniec</label>
+                        <input id="editEnd" name="End" type="datetime-local" class="form-control" />
+                    </div>
+
+                    <div id="editRecurringInfo" class="mt-3 p-2 border rounded" style="display:none; background:#fff0f6;">
+                        <p class="fw-bold text-danger">
+                            ⚠️ Ten trening jest częścią cyklicznego planu.
+                            Edytujesz tylko to pojedyncze zdarzenie.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-danger" onclick="deleteSingleEvent()">Usuń</button>
+                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                </div>
+
+            </form>
         </div>
-
-        <div class="modal-body">
-          <input type="hidden" id="editEventId" name="Id"/>
-
-          <div class="mb-2">
-            <label>Tytuł</label>
-            <input id="editTitle" name="Title" class="form-control"/>
-          </div>
-
-          <div class="mb-2">
-            <label>Opis</label>
-            <textarea id="editDescription" name="Description" class="form-control"></textarea>
-          </div>
-
-          <div class="mb-2">
-            <label>Start</label>
-            <input id="editStart" name="Start" type="datetime-local" class="form-control"/>
-          </div>
-
-          <div class="mb-2">
-            <label>Koniec</label>
-            <input id="editEnd" name="End" type="datetime-local" class="form-control"/>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" onclick="deleteSingleEvent()">Usuń</button>
-          <button type="submit" class="btn btn-primary">Zapisz</button>
-        </div>
-
-      </form>
     </div>
-  </div>
 </div>
-
-
 
 @section Scripts {
 
-<script>
+    <!-- FullCalendar działa w tym skrypcie -->
+    <script>
 
-//////////////////////////////////////////////////////////////////////////////
-//                              KALENDARZ
-//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////
+        //                              KALENDARZ
+        //////////////////////////////////////////////////////////////////////////////
 
-document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function () {
 
-    console.log("FullCalendar:", FullCalendar);
+            const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+                initialView: 'dayGridMonth',
+                locale: 'pl',
+                timeZone: 'local',
+                selectable: true,
 
-    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-        initialView: 'dayGridMonth',
-        locale: 'pl',
-        timeZone: 'local',
-        selectable: true,
+                events: '/Training/GetEvents',
 
-        events: '/Training/GetEvents',
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
 
-        eventTimeFormat: {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        },
+                dateClick(info) {
+                    const modal = new bootstrap.Modal(document.getElementById('calendarAddEventModal'));
+                    document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
+                    document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
+                    modal.show();
+                },
 
-        dateClick(info) {
-            const modal = new bootstrap.Modal(document.getElementById('calendarAddEventModal'));
-            document.querySelector('[name="Start"]').value = info.dateStr + "T08:00";
-            document.querySelector('[name="End"]').value = info.dateStr + "T09:00";
-            modal.show();
-        },
-
-        eventClick(info) {
-            openEditModal(info.event);
-        }
-    });
-
-    calendar.render();
-
-
-//////////////////////////////////////////////////////////////////////////////
-//                         EDYCJA WYDARZENIA
-//////////////////////////////////////////////////////////////////////////////
-
-    function openEditModal(event) {
-        const modal = new bootstrap.Modal(document.getElementById('editEventModal'));
-
-        document.getElementById("editEventId").value = event.id;
-        document.getElementById("editTitle").value = event.title;
-        document.getElementById("editDescription").value = event.extendedProps.description || "";
-        document.getElementById("editStart").value = event.startStr.substring(0, 16);
-        document.getElementById("editEnd").value = event.endStr.substring(0, 16);
-
-        modal.show();
-    }
-
-    document.getElementById("editEventForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const formData = Object.fromEntries(new FormData(e.target));
-
-        const res = await fetch("/Training/UpdateEvent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        });
-
-        if (res.ok) {
-            bootstrap.Modal.getOrCreateInstance(document.getElementById("editEventModal")).hide();
-            calendar.refetchEvents();
-        }
-    });
-
-
-//////////////////////////////////////////////////////////////////////////////
-//                           USUWANIE EVENTU
-//////////////////////////////////////////////////////////////////////////////
-
-    window.deleteSingleEvent = async function () {
-        const id = document.getElementById("editEventId").value;
-        if (!confirm("Usunąć?")) return;
-
-        await fetch("/Training/DeleteEvent", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(id)
-        });
-
-        bootstrap.Modal.getOrCreateInstance(document.getElementById("editEventModal")).hide();
-        calendar.refetchEvents();
-    };
-
-
-//////////////////////////////////////////////////////////////////////////////
-//                              STATYSTYKI
-//////////////////////////////////////////////////////////////////////////////
-
-    function loadNextTraining() {
-        fetch("/Training/GetNextTraining")
-            .then(r => r.json())
-            .then(data => {
-                const el = document.getElementById("stat-next-training");
-
-                if (!data.exists) {
-                    el.innerHTML = "Brak zaplanowanych treningów.";
-                } else {
-                    let start = new Date(data.start);
-                    el.innerHTML = `${start.toLocaleDateString("pl-PL")} • ${start.toLocaleTimeString("pl-PL", {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    })} — ${data.title}`;
+                eventClick(info) {
+                    openEditModal(info.event);
                 }
             });
-    }
 
-    function loadRecurringCount() {
-        fetch("/Training/GetRecurringPlans")
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById("stat-recurring").innerText = data.length;
+            calendar.render();
+
+
+        //////////////////////////////////////////////////////////////////////////////
+        //                         EDYCJA WYDARZENIA
+        //////////////////////////////////////////////////////////////////////////////
+
+            function openEditModal(event) {
+
+                const modal = new bootstrap.Modal(document.getElementById('editEventModal'));
+
+                document.getElementById("editEventId").value = event.id;
+                document.getElementById("editTitle").value = event.title;
+                document.getElementById("editDescription").value = event.extendedProps.description || "";
+                document.getElementById("editStart").value = event.startStr.substring(0, 16);
+                document.getElementById("editEnd").value = event.endStr.substring(0, 16);
+
+                modal.show();
+            }
+
+            document.getElementById("editEventForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const formData = Object.fromEntries(new FormData(e.target));
+
+                const res = await fetch("/Training/UpdateEvent", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+
+                if (res.ok) {
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById("editEventModal")).hide();
+                    calendar.refetchEvents();
+                }
             });
-    }
 
-    function loadMonthlyCount() {
-        const today = new Date();
-        const y = today.getFullYear();
-        const m = today.getMonth() + 1;
 
-        fetch(`/Training/GetMonthlyCount?year=${y}&month=${m}`)
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById("stat-monthly").innerText = data.count;
+        //////////////////////////////////////////////////////////////////////////////
+        //                           USUWANIE EVENTU
+        //////////////////////////////////////////////////////////////////////////////
+
+            window.deleteSingleEvent = async function () {
+
+                const id = document.getElementById("editEventId").value;
+
+                if (!confirm("Czy na pewno chcesz usunąć ten trening?")) return;
+
+                const response = await fetch("/Training/DeleteEvent?id=" + id, {
+                    method: "POST"
+                });
+
+                const raw = await response.text();
+                console.log("DeleteEvent RAW:", raw);
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById("editEventModal")).hide();
+                calendar.refetchEvents();
+
+                alert("✔ Trening został usunięty.");
+            };
+
+
+        //////////////////////////////////////////////////////////////////////////////
+        //                              STATYSTYKI
+        //////////////////////////////////////////////////////////////////////////////
+
+            function loadNextTraining() {
+                fetch("/Training/GetNextTraining")
+                    .then(r => r.json())
+                    .then(data => {
+                        const el = document.getElementById("stat-next-training");
+
+                        if (!data.exists) {
+                            el.innerHTML = "Brak zaplanowanych treningów.";
+                        } else {
+                            let start = new Date(data.start);
+                            el.innerHTML = `${start.toLocaleDateString("pl-PL")} • ${start.toLocaleTimeString("pl-PL", {
+                                hour: "2-digit",
+                                minute: "2-digit"
+                            })} — ${data.title}`;
+                        }
+                    });
+            }
+
+            function loadRecurringCount() {
+                fetch("/Training/GetRecurringPlans")
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById("stat-recurring").innerText = data.length;
+                    });
+            }
+
+            function loadMonthlyCount() {
+                const today = new Date();
+                const y = today.getFullYear();
+                const m = today.getMonth() + 1;
+
+                fetch(`/Training/GetMonthlyCount?year=${y}&month=${m}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        document.getElementById("stat-monthly").innerText = data.count;
+                    });
+            }
+
+            loadNextTraining();
+            loadRecurringCount();
+            loadMonthlyCount();
+
+
+        //////////////////////////////////////////////////////////////////////////////
+        //                           DODAWANIE WYDARZENIA
+        //////////////////////////////////////////////////////////////////////////////
+
+            function fixDate(dateString) {
+                if (!dateString) return null;
+                return dateString.length === 16 ? dateString + ":00" : dateString;
+            }
+
+            document.getElementById("addEventForm").addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const isRecurring = document.getElementById("isRecurring").checked;
+
+                let selectedDays = [];
+                document.querySelectorAll(".weekday:checked").forEach(d => selectedDays.push(d.value));
+
+                const endDateRaw = document.getElementById("recurrenceEndDate").value;
+
+                const payload = {
+                    Title: this.Title.value,
+                    Description: this.Description.value,
+                    Start: fixDate(this.Start.value),
+                    End: fixDate(this.End.value),
+                    IsRecurring: isRecurring,
+                    RecurrenceInterval: isRecurring ? document.getElementById("recurrenceInterval").value : null,
+                    RecurrenceDays: isRecurring ? selectedDays.join(",") : null,
+                    RecurrenceEndDate: isRecurring && endDateRaw ? endDateRaw + "T23:59:59" : null
+                };
+
+                console.log("WYSYŁAM PAYLOAD:", payload);
+
+                const res = await fetch("/Training/AddEvent", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const raw = await res.text();
+                console.log("RAW RESPONSE:", raw);
+
+                if (!res.ok) {
+                    alert("Błąd serwera:\n" + raw);
+                    return;
+                }
+
+                const result = JSON.parse(raw);
+
+                if (result.success) {
+                    location.reload();
+                } else {
+                    alert("Błąd: " + result.error);
+                }
             });
-    }
 
-    loadNextTraining();
-    loadRecurringCount();
-    loadMonthlyCount();
+        }); // KONIEC DOMContentLoaded
 
 
-//////////////////////////////////////////////////////////////////////////////
-//                           DODAWANIE WYDARZENIA
-//////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////
+        //                       POKAZYWANIE OPCJI CYKLICZNYCH
+        //////////////////////////////////////////////////////////////////////////////
 
-    function fixDate(dateString) {
-        if (!dateString) return null;
-        return dateString.length === 16 ? dateString + ":00" : dateString;
-    }
+        document.getElementById("isRecurring").addEventListener("change", function () {
+            const box = document.getElementById("recurrenceOptions");
+            box.style.display = this.checked ? "block" : "none";
 
-    document.getElementById("addEventForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
+            if (this.checked) {
+                const endInput = document.getElementById("recurrenceEndDate");
+                if (!endInput.value) {
+                    let def = new Date();
+                    def.setMonth(def.getMonth() + 1);
+                    endInput.value = def.toISOString().split("T")[0];
+                }
+            }
+        });
 
-        const isRecurring = document.getElementById("isRecurring").checked;
 
-        let selectedDays = [];
-        document.querySelectorAll(".weekday:checked").forEach(d => selectedDays.push(d.value));
-const endDateRaw = document.getElementById("recurrenceEndDate").value;
-        const payload = {
-    Title: this.Title.value,
-    Description: this.Description.value,
-    Start: fixDate(this.Start.value),
-    End: fixDate(this.End.value),
-    IsRecurring: isRecurring,
-    RecurrenceInterval: isRecurring ? document.getElementById("recurrenceInterval").value : null,
-    RecurrenceDays: isRecurring ? selectedDays.join(",") : null,
-    RecurrenceEndDate: isRecurring && endDateRaw 
-        ? endDateRaw + "T23:59:59"
-        : null
-};
+        //////////////////////////////////////////////////////////////////////////////
+        //                       ŁADOWANIE CYKLICZNYCH PLANÓW
+        //////////////////////////////////////////////////////////////////////////////
 
-        console.log("WYSYŁAM PAYLOAD:", payload);
+        async function loadRecurringPlans() {
+            try {
+                const res = await fetch("/Training/GetRecurringPlans");
+                const plans = await res.json();
 
-        const res = await fetch("/Training/AddEvent", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-});
+                const box = document.getElementById("recurringList");
 
-// --- NOWE: pokaż odpowiedź RAW ---
-const raw = await res.text();
-console.log("RAW RESPONSE:", raw);
+                if (!plans || plans.length === 0) {
+                    box.innerHTML = "<p class='text-muted'>Brak cyklicznych planów.</p>";
+                    return;
+                }
 
-if (!res.ok) {
-    alert("Błąd serwera:\n" + raw);
-    return;
-}
+                box.innerHTML = plans
+                    .map(p => `
+                        <div class="p-3 mb-2 border rounded" style="background:white;">
+                            <strong>${p.title}</strong><br>
+                            🔁 ${p.recurrenceInterval ?? "-"} (${p.recurrenceDays ?? "-"})<br>
+                            📅 Do: ${p.recurrenceEndDate ? p.recurrenceEndDate.substring(0,10) : "-"}
+                        </div>
+                    `)
+                    .join("");
 
-const result = JSON.parse(raw);
-
-if (result.success) {
-    location.reload();
-} else {
-    alert("Błąd: " + result.error);
-}
-    });
-
-});
-
-document.getElementById("isRecurring").addEventListener("change", function () {
-    const box = document.getElementById("recurrenceOptions");
-    box.style.display = this.checked ? "block" : "none";
-
-    if (this.checked) {
-        const endInput = document.getElementById("recurrenceEndDate");
-        if (!endInput.value) {
-            let def = new Date();
-            def.setMonth(def.getMonth() + 1);
-            endInput.value = def.toISOString().split("T")[0];
-        }
-    }
-});
-async function loadRecurringPlans() {
-    try {
-        const res = await fetch("/Training/GetRecurringPlans");
-        if (!res.ok) {
-            document.getElementById("recurringList").innerHTML =
-                "<p class='text-danger'>Błąd pobierania planów</p>";
-            return;
+            } catch (e) {
+                console.error("Recurring plans error:", e);
+                document.getElementById("recurringList").innerHTML =
+                    "<p class='text-danger'>Błąd podczas odczytywania danych.</p>";
+            }
         }
 
-        const plans = await res.json();
-        const box = document.getElementById("recurringList");
+        loadRecurringPlans();
 
-        if (!plans || plans.length === 0) {
-            box.innerHTML = "<p class='text-muted'>Brak cyklicznych planów.</p>";
-            return;
+    </script>
+
+    <!-- ŁADUJEMY CHART.JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- WYKRES STATYSTYK -->
+    <script>
+        async function loadStatsChart() {
+            const res = await fetch("/Training/GetCategoryStats");
+            const data = await res.json();
+
+            const labels = data.map(x => x.category);
+            const values = data.map(x => x.count);
+
+            const ctx = document.getElementById('statsChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        borderWidth: 1,
+                        backgroundColor: [
+                            '#ff8ba7',
+                            '#ffb3c6',
+                            '#cdeac0',
+                            '#a0c4ff',
+                            '#bdb2ff'
+                        ]
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { size: 14 }
+                            }
+                        }
+                    }
+                }
+            });
         }
-
-       box.innerHTML = plans
-    .map(p => `
-        <div class="p-3 mb-2 border rounded" style="background:white;">
-            <strong>${p.title}</strong><br>
-            🔁 ${p.recurrenceInterval ?? "-"} (${p.recurrenceDays ?? "-"})<br>
-            📅 Do: ${p.recurrenceEndDate ? p.recurrenceEndDate.substring(0,10) : "-"}
-        </div>
-    `)
-    .join("");
-
-    }
-    catch (e) {
-        console.error("Recurring plans error:", e);
-        document.getElementById("recurringList").innerHTML =
-            "<p class='text-danger'>Błąd podczas odczytywania danych.</p>";
-    }
-}
-
-loadRecurringPlans();
-</script>
+        loadStatsChart();
+    </script>
 
 }
+

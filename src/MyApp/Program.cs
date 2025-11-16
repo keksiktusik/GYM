@@ -21,7 +21,7 @@ builder.Services.AddHostedService<TrainingReminderService>();
 // -----------------------------------------------------------
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true; 
+    options.SignIn.RequireConfirmedAccount = true;
     options.Password.RequiredLength = 6;
     options.Password.RequireUppercase = false;
     options.Password.RequireLowercase = true;
@@ -102,7 +102,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // -----------------------------------------------------------

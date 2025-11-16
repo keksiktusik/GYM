@@ -191,6 +191,7 @@ if (training.IsRecurring)
             return Ok(new { success = true });
         }
 
+
         // 💌 Wysyłka maila po utworzeniu treningu
         private async Task SendImmediateEmail(ApplicationUser user, TrainingEvent training)
         {
@@ -280,65 +281,85 @@ if (training.IsRecurring)
 
             return Ok(new { success = true });
         }
+
         [HttpPost]
-public async Task<IActionResult> UpdateEvent([FromBody] TrainingEvent updated)
-{
-    var user = await _userManager.GetUserAsync(User);
-    if (user == null) return Unauthorized();
+        public async Task<IActionResult> UpdateEvent([FromBody] TrainingEvent updated)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-    var existing = _context.TrainingEvents
-        .FirstOrDefault(e => e.Id == updated.Id && e.UserId == user.Id);
+            var existing = _context.TrainingEvents
+                .FirstOrDefault(e => e.Id == updated.Id && e.UserId == user.Id);
 
-    if (existing == null)
-        return NotFound();
+            if (existing == null)
+                return NotFound();
 
-    existing.Title = updated.Title;
-    existing.Description = updated.Description;
-    existing.Start = updated.Start;
-    existing.End = updated.End;
+            existing.Title = updated.Title;
+            existing.Description = updated.Description;
+            existing.Start = updated.Start;
+            existing.End = updated.End;
 
-    await _context.SaveChangesAsync();
-    return Ok(new { success = true });
-}
-[HttpGet]
-public async Task<IActionResult> GetNextTraining()
-{
-    var user = await _userManager.GetUserAsync(User);
-    if (user == null) return Unauthorized();
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true });
+        }
 
-    var now = DateTime.UtcNow;
+        [HttpGet]
+        public async Task<IActionResult> GetNextTraining()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-    var next = _context.TrainingEvents
-        .Where(e => e.UserId == user.Id && e.Start > now)
-        .OrderBy(e => e.Start)
-        .FirstOrDefault();
+            var now = DateTime.UtcNow;
 
-    if (next == null)
-        return Json(new { exists = false });
+            var next = _context.TrainingEvents
+                .Where(e => e.UserId == user.Id && e.Start > now)
+                .OrderBy(e => e.Start)
+                .FirstOrDefault();
 
-    return Json(new
-    {
-        exists = true,
-        title = next.Title,
-        start = next.Start
-    });
-}
-[HttpGet]
-public async Task<IActionResult> GetMonthlyCount(int year, int month)
-{
-    var user = await _userManager.GetUserAsync(User);
-    if (user == null) return Unauthorized();
+            if (next == null)
+                return Json(new { exists = false });
 
-    var start = new DateTime(year, month, 1);
-    var end = start.AddMonths(1);
+            return Json(new
+            {
+                exists = true,
+                title = next.Title,
+                start = next.Start
+            });
+        }
 
-    int count = _context.TrainingEvents
-        .Where(e => e.UserId == user.Id && e.Start >= start && e.Start < end)
-        .Count();
+        [HttpGet]
+        public async Task<IActionResult> GetMonthlyCount(int year, int month)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
 
-    return Json(new { count });
-}
+            var start = new DateTime(year, month, 1);
+            var end = start.AddMonths(1);
 
+            int count = _context.TrainingEvents
+                .Where(e => e.UserId == user.Id && e.Start >= start && e.Start < end)
+                .Count();
+
+            return Json(new { count });
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetCategoryStats()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var stats = _context.TrainingEvents
+                .Where(e => e.UserId == user.Id)
+                .GroupBy(e => e.Title)
+                .Select(g => new
+                {
+                    category = g.Key,
+                    count = g.Count()
+                })
+                .ToList();
+
+            return Json(stats);
+        }
 
     }
 }

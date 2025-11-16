@@ -1,13 +1,69 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\wikaf\\GYM\\src\\MyApp\\",
+  "WorkspaceRootPath": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\gym\\src\\myapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\views\\training\\calendar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:views\\training\\calendar.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\controllers\\trainingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:controllers\\trainingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\controllers\\clientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:controllers\\clientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\gym\\src\\myapp\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Migrations\\20251116125528_FixModels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Migrations\\20251116125528_FixModels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\services\\smtpemailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:services\\smtpemailsender.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\views\\client\\cindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:views\\client\\cindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\myapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:myapp.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\views\\admin\\users.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:views\\admin\\users.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\models\\trainingevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:models\\trainingevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\views\\admin\\aindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:views\\admin\\aindex.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:views\\shared\\_loginpartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|c:\\users\\wikaf\\desktop\\gym\\src\\myapp\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{6D275F6F-AEAD-E531-D3D7-DD3DC3888BC7}|MyApp.csproj|solutionrelative:data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -18,7 +74,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -26,24 +82,208 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\wikaf\\GYM\\src\\MyApp\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\wikaf\\GYM\\src\\MyApp\\Program.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-29T13:54:29.004Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-29T15:14:34.956Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "CIndex.cshtml",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Client\\CIndex.cshtml",
+              "RelativeDocumentMoniker": "Views\\Client\\CIndex.cshtml",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Client\\CIndex.cshtml",
+              "RelativeToolTip": "Views\\Client\\CIndex.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-29T14:54:14.508Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ClientController.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Controllers\\ClientController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ClientController.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Controllers\\ClientController.cs",
+              "RelativeToolTip": "Controllers\\ClientController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T14:53:15.291Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AdminController.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Controllers\\AdminController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AdminController.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Controllers\\AdminController.cs",
+              "RelativeToolTip": "Controllers\\AdminController.cs",
+              "ViewState": "AgIAAPUAAAAAAAAAAAAUwAIBAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T14:51:21.815Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Users.cshtml",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Admin\\Users.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\Users.cshtml",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Admin\\Users.cshtml",
+              "RelativeToolTip": "Views\\Admin\\Users.cshtml",
+              "ViewState": "AgIAAI4AAAAAAAAAAAAqwJ0AAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-16T11:16:36.364Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Calendar.cshtml",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Training\\Calendar.cshtml",
+              "RelativeDocumentMoniker": "Views\\Training\\Calendar.cshtml",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Training\\Calendar.cshtml",
+              "RelativeToolTip": "Views\\Training\\Calendar.cshtml",
+              "ViewState": "AgIAAPwBAAAAAAAAAAAwwBcCAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-11-16T11:30:36.733Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SmtpEmailSender.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Services\\SmtpEmailSender.cs",
+              "RelativeDocumentMoniker": "Services\\SmtpEmailSender.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Services\\SmtpEmailSender.cs",
+              "RelativeToolTip": "Services\\SmtpEmailSender.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-29T15:00:57.886Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "20251116125528_FixModels.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Migrations\\20251116125528_FixModels.cs",
+              "RelativeDocumentMoniker": "Migrations\\20251116125528_FixModels.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Migrations\\20251116125528_FixModels.cs",
+              "RelativeToolTip": "Migrations\\20251116125528_FixModels.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T12:55:28.522Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "TrainingController.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Controllers\\TrainingController.cs",
+              "RelativeDocumentMoniker": "Controllers\\TrainingController.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Controllers\\TrainingController.cs",
+              "RelativeToolTip": "Controllers\\TrainingController.cs",
+              "ViewState": "AgIAAF4BAAAAAAAAAAAmwGoBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T11:31:26.197Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MyApp.csproj",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\MyApp.csproj",
+              "RelativeDocumentMoniker": "MyApp.csproj",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\MyApp.csproj",
+              "RelativeToolTip": "MyApp.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-10-29T14:59:53.946Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "TrainingEvent.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Models\\TrainingEvent.cs",
+              "RelativeDocumentMoniker": "Models\\TrainingEvent.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Models\\TrainingEvent.cs",
+              "RelativeToolTip": "Models\\TrainingEvent.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAADwvyIAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-16T11:56:18.224Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "AIndex.cshtml",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Admin\\AIndex.cshtml",
+              "RelativeDocumentMoniker": "Views\\Admin\\AIndex.cshtml",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Admin\\AIndex.cshtml",
+              "RelativeToolTip": "Views\\Admin\\AIndex.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-29T14:52:39.143Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "_LoginPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_LoginPartial.cshtml",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Shared\\_LoginPartial.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_LoginPartial.cshtml",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwCgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-29T14:41:47.817Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAB4AAAAAAAAAAIBJwCAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-10-29T14:40:06.924Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
               "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\wikaf\\GYM\\src\\MyApp\\Data\\ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Data\\ApplicationDbContext.cs",
               "RelativeDocumentMoniker": "Data\\ApplicationDbContext.cs",
-              "ToolTip": "C:\\Users\\wikaf\\GYM\\src\\MyApp\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\wikaf\\Desktop\\GYM\\src\\MyApp\\Data\\ApplicationDbContext.cs",
               "RelativeToolTip": "Data\\ApplicationDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

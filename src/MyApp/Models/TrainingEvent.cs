@@ -32,7 +32,10 @@ namespace MyApp.Models
         public DateTime? RecurrenceEndDate { get; set; }
 
         public Guid? RecurrenceGroupId { get; set; }
-        
+        public bool IsAdminEvent { get; set; } = false;   
+        public bool? IsApproved { get; set; } = null;     
+
+
     }
 }
 
