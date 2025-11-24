@@ -1,0 +1,19 @@
+@model IEnumerable<MyApp.Models.GalleryPhoto>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 fw-bold text-pink">📸 Galeria siłowni</h2>
+
+    <div class="row g-4">
+        @foreach (var photo in Model)
+        {
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <img src="@photo.FilePath" class="card-img-top" />
+                    <div class="card-body">
+                        <p class="card-text">@photo.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

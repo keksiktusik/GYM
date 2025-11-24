@@ -45,6 +45,9 @@
                                 Zajęcia
                             </a>
                         </li>
+                        <li class="nav-item">
+    <a class="nav-link text-pink fw-bold" asp-controller="Gallery" asp-action="Index">Galeria</a>
+</li>
 
                         @if (SignInManager.IsSignedIn(User))
                         {
@@ -59,7 +62,8 @@
                         @if (User.IsInRole("Administrator"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="Users">
+                                <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="Index">
+
                                     Panel Admina
                                 </a>
                             </li>

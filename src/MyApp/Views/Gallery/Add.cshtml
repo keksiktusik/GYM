@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Dodaj zdjęcie";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 fw-bold text-pink">➕ Dodaj zdjęcie do galerii</h2>
+
+    <form method="post" enctype="multipart/form-data" class="card p-4 shadow-sm border-0">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Zdjęcie</label>
+            <input type="file" name="photo" class="form-control border-pink" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label fw-bold">Opis (opcjonalnie)</label>
+            <textarea name="description" class="form-control border-pink"></textarea>
+        </div>
+
+        <button class="btn btn-pink w-100">Dodaj</button>
+    </form>
+</div>

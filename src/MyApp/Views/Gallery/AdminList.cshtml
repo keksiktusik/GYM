@@ -1,0 +1,32 @@
+@model IEnumerable<MyApp.Models.GalleryPhoto>
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 fw-bold text-pink">🖼 Zarządzanie Galerią</h2>
+
+    <a href="/Gallery/Add" class="btn btn-pink mb-3">➕ Dodaj zdjęcie</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Podgląd</th>
+                <th>Opis</th>
+                <th>Data</th>
+                <th>Akcje</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td><img src="@p.FilePath" width="120" class="rounded shadow-sm" /></td>
+                    <td>@p.Description</td>
+                    <td>@p.DateAdded</td>
+                    <td>
+                        <a href="/Gallery/Delete/@p.Id" class="btn btn-danger btn-sm">Usuń</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

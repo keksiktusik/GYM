@@ -12,5 +12,8 @@ namespace MyApp.Data
         }
 
         public DbSet<TrainingEvent> TrainingEvents { get; set; }
+
+        
+        public DbSet<GalleryPhoto> GalleryPhotos { get; set; }
     }
 }
